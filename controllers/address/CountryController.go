@@ -56,21 +56,19 @@ func (ctl *AddressCountryController) Get() {
 // Put 修改产品款式
 func (ctl *AddressCountryController) Put() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
 	country := new(md.AddressCountry)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), country); err == nil {
+	if err = ctl.ParseForm(country); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(country)).Type().Name()
-		if id, err = md.AddAddressCountry(country, &ctl.User); err == nil {
+		if id, err = md.UpdateAddressCountry(country, &ctl.User); err == nil {
 			result["code"] = "success"
 			result["location"] = ctl.URL + strconv.FormatInt(id, 10) + "?action=detail"
 		} else {
 			result["code"] = "failed"
-			result["message"] = "数据创建失败"
 			result["debug"] = err.Error()
 		}
 	}
@@ -83,13 +81,12 @@ func (ctl *AddressCountryController) Put() {
 }
 func (ctl *AddressCountryController) PostCreate() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
-	country := new(md.AddressCountry)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), country); err == nil {
+	country := new(md.AddressCountry)
+	if err = ctl.ParseForm(country); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(country)).Type().Name()
 		if id, err = md.AddAddressCountry(country, &ctl.User); err == nil {

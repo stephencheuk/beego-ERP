@@ -55,16 +55,16 @@ func (ctl *AddressProvinceController) Get() {
 // Put 修改产品款式
 func (ctl *AddressProvinceController) Put() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
+
 	province := new(md.AddressProvince)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), province); err == nil {
+	if err = ctl.ParseForm(province); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(province)).Type().Name()
-		if id, err = md.AddAddressProvince(province, &ctl.User); err == nil {
+		if id, err = md.UpdateAddressProvince(province, &ctl.User); err == nil {
 			result["code"] = "success"
 			result["location"] = ctl.URL + strconv.FormatInt(id, 10) + "?action=detail"
 		} else {
@@ -75,6 +75,7 @@ func (ctl *AddressProvinceController) Put() {
 	}
 	if err != nil {
 		result["code"] = "failed"
+		result["message"] = "解析失败"
 		result["debug"] = err.Error()
 	}
 	ctl.Data["json"] = result
@@ -82,13 +83,12 @@ func (ctl *AddressProvinceController) Put() {
 }
 func (ctl *AddressProvinceController) PostCreate() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
 	province := new(md.AddressProvince)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), province); err == nil {
+	if err = ctl.ParseForm(province); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(province)).Type().Name()
 		if id, err = md.AddAddressProvince(province, &ctl.User); err == nil {

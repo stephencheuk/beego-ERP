@@ -55,229 +55,104 @@ var BootstrapValidator = function(selector, needValidatorFields) {
         submitButtons: 'button[type="submit"]',
         trigger: null,
         fields: needValidatorFields
-    }).on('1231success.form.bv', function(e) {
+    }).on('success.form.bv', function(e) {
         // Prevent form submission
         e.preventDefault();
-        // 默认为表单数据创建
-        var httpMethod = "POST";
-        var $form = $(e.currentTarget);
-        var formData = {
-            FormAction: "create"
-        };
-        var xsrf = $("input[name ='_xsrf']");
-        if (xsrf.length > 0) {
-            xsrf = xsrf[0].value;
-            // formData._xsrf = xsrf[0].value;
-        }
-        //    获得form直接的字段
-        var formFields = $form.find(".form-create,.form-edit");
-        if ($form.find("input[name='recordID']").length > 0) {
-            // 表单数据更新
-            formData.FormAction = "update";
-            httpMethod = "PUT";
-        }
-        var actionFields = [];
-        for (var item = 0, formFieldsLen = formFields.length; item < formFieldsLen; item++) {
-            var self = formFields[item];
-            var dataType = $(self).data("type");
-            var oldValue = null;
-            oldValue = $(self).data("oldvalue");
-            var val = $(self).val();
-            // 处理radio数据
-            if (self.type == "radio") {
-                if (dataType == "string") {
-                    var nodeName = $("input[name ='" + self.name + "']:checked");
-                    if (nodeName != undefined) {
-                        actionFields.push(self.name);
-                        formData[self.name] = nodeName.val();
-                    }
-                } else {
-                    console.log("data  type is not string");
-                }
-            } else if (self.type == "checkbox") {
-                if (self.checked) {
-                    formData[self.name] = true;
-                } else {
-                    formData[self.name] = false;
-                }
-                actionFields.push(self.name);
+        var $form = $(e.target);
+
+        // Get the BootstrapValidator instance
+        var bv = $form.data('bootstrapValidator');
+
+        // Use Ajax to submit form data
+        $.post($form.attr('action'), $form.serialize(), function(response) {
+            if (response.code == 'failed') {
+                toastr.error("请求失败<br>" + response.debug, "错误");
+                return;
             } else {
-
-                // 判断整形数组值是否改变,只存在增加、删除的情况。oldValue="1,2,3,"
-                if (dataType == "array_int") {
-                    var addIds = []; //值为记录的id ,int类型
-                    var deleteIds = []; //值为记录的id ,int类型
-                    console.log(self.name);
-                    console.log(oldValue);
-                    console.log(val);
-
-                    if (!val) {
-                        val = [];
-                    }
-                    if (!oldValue) {
-                        oldValue = "";
-                    }
-
-                    var newIdsStr = "," + val.join(",") + ",";
-                    var oldValueArrs = oldValue.split(","); //字符分割
-                    var oldIdsStr = "," + oldValue;
-
-                    // 如果当前值在旧值中不存在，添加到addIds中
-                    for (var nIdex = 0, nLen = val.length; nIdex < nLen; nIdex++) {
-                        if (val[nIdex] == "") {
-                            continue;
-                        }
-                        // oldIdsStr =",1,2,3,4," 判断时以","作为分割
-                        if (oldIdsStr.indexOf("," + val[nIdex] + ",") == -1) {
-                            var newId = parseInt(val[nIdex]);
-                            if (newId) {
-                                addIds.push(newId);
-                            }
-                        }
-                    }
-                    // 如果旧值在当前值中不存在,则认为该记录要被删除
-                    for (var oIdex = 0, oLen = oldValueArrs.length; oIdex < oLen; oIdex++) {
-                        if (oldValueArrs[oIdex] == "") {
-                            continue;
-                        }
-                        if (newIdsStr.indexOf("," + oldValueArrs[oIdex] + ",") == -1) {
-                            var deleteId = parseInt(oldValueArrs[oIdex]);
-                            if (deleteId) {
-                                deleteIds.push(deleteId);
-                            }
-                        }
-                    }
-                    var mapActionRecords = {};
-                    if (addIds.length > 0) {
-                        mapActionRecords.create = addIds;
-                    }
-                    if (deleteIds.length > 0) {
-                        mapActionRecords.delete = deleteIds;
-                    }
-                    if (mapActionRecords.delete != undefined || mapActionRecords.create != undefined) {
-                        formData[self.name] = mapActionRecords;
-                    }
-                } else {
-                    // 如果值未改变不添加进去
-                    if (val == oldValue) {
-                        continue;
-                    }
-                    if (val != "") {
-                        // 若为null跳出此次循环
-                        if (val === null) {
-                            continue;
-                        }
-                        // 如果input[@name="recordID"]存在
-                        if (self.name == 'recordID') {
-                            formData["id"] = getCurrentDataType(val, dataType);
-                        } else {
-                            formData[self.name] = getCurrentDataType(val, dataType);
-                            actionFields.push(self.name);
-                        }
-                    }
-                }
-            }
-        }
-        formData["actionFields"] = actionFields;
-        //获得form-tree-create信息
-        var formTreeFields = $form.find(".form-tree-line-create");
-        for (var i = 0, lineLen = formTreeFields.length; i < lineLen; i++) {
-            var self = formTreeFields[i];
-            var treeName = $(self).data("treename");
-            if (formData[treeName] == undefined) {
-                formData[treeName] = [];
-            }
-            var cellFields = $(self).find(".form-line-cell-create");
-            var resultCreate = getTreeLineData(cellFields, "create");
-            if (resultCreate.hasProp) {
-                formData[treeName].push(resultCreate.cellData);
-            }
-        }
-        //获得form-tree-edit信息
-        var formTreeFields = $form.find(".form-tree-line-edit");
-        for (var i = 0, lineLen = formTreeFields.length; i < lineLen; i++) {
-            var self = formTreeFields[i];
-            var treeName = $(self).data("treename");
-            if (formData[treeName] == undefined) {
-                formData[treeName] = [];
-            }
-            var createCellFields = $(self).find(".form-line-cell-create");
-            if (createCellFields.length > 0) {
-                var resultCreate = getTreeLineData(createCellFields, "create");
-                if (resultCreate.hasProp) {
-                    formData[treeName].push(resultCreate.cellData);
-                }
-            }
-            var editCellFields = $(self).find(".form-line-cell-edit");
-            if (editCellFields.length > 0) {
-                var resultCreate = getTreeLineData(editCellFields, "update");
-                if (resultCreate.hasProp) {
-                    formData[treeName].push(resultCreate.cellData);
-                }
-            }
-        }
-        var requestParams = {
-            postData: JSON.stringify(formData),
-            _xsrf: xsrf
-        };
-        var method = $form.find("input[name='_method']");
-        if (method.length > 0) {
-            requestParams._method = method.val();
-        }
-        $.ajax({
-            type: httpMethod,
-            url: $form.action,
-            data: requestParams,
-            dataType: "json",
-            success: function(response) {
-                if (response.code == 'failed') {
-                    if (formData.FormAction == "update") {
-                        toastr.error("修改失败<br>" + response.debug, "错误");
-                    } else {
-                        toastr.error("创建失败<br>" + response.debug, "错误");
-                    }
-                    return;
-                } else {
-                    if (formData.FormAction == "update") {
-                        toastr.success("<h3>修改成功</h3><br><a href='" + response.location + "'>1秒后跳转</a>");
-                    } else {
-                        toastr.success("<h3>创建成功</h3><br><a href='" + response.location + "'>1秒后跳转</a>");
-                    }
-                    console.log(response.location);
-                    // setTimeout(function() { window.location = response.location; }, 1000);
-                }
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                console.log(XMLHttpRequest.status);
-                console.log(XMLHttpRequest.readyState);
-                console.log(textStatus);
-                toastr.error("请求失败，请刷新页面后再操作", "错误");
+                toastr.success("<h3>请求成功</h3><br><a href='" + response.location + "'>1秒后跳转</a>");
+                // setTimeout(function() { window.location = response.location; }, 1000);
             }
         });
-        // $.post($form.action, requestParams).success(function(response) {
-        //     if (response.code == 'failed') {
-        //         if (formData.FormAction == "update") {
-        //             toastr.error("修改失败", "错误");
-        //         } else {
-        //             toastr.error("创建失败", "错误");
-        //         }
-        //         return;
-        //     } else {
-        //         if (formData.FormAction == "update") {
-        //             toastr.success("<h3>修改成功</h3><br><a href='" + response.location + "'>1秒后跳转</a>");
-        //         } else {
-        //             toastr.success("<h3>创建成功</h3><br><a href='" + response.location + "'>1秒后跳转</a>");
-        //         }
-        //         console.log(response.location);
-        //         // setTimeout(function() { window.location = response.location; }, 1000);
-        //     }
-        // });
 
     });
 };
 
 $(function() {
     'use strict';
+    // 国家
+    BootstrapValidator("#countryForm", {
+        Name: {
+            message: "该值无效",
+            validators: {
+                notEmpty: {
+                    message: "国家名称不能为空"
+                },
+                remote: {
+                    url: "/address/country/",
+                    message: "国家名称已经存在",
+                    dataType: "json",
+                    delay: 200,
+                    type: "POST",
+                    data: function() {
+
+                        var params = {
+                            action: "validator"
+                        }
+                        var xsrf = $("input[name ='_xsrf']");
+                        if (xsrf.length > 0) {
+                            params._xsrf = xsrf[0].value;
+                        }
+                        var name = $('input[name="name"]');
+                        if (name.length > 0) {
+                            params.name = name[0].value;
+                        }
+                        var recordID = $("input[name ='recordID']");
+                        if (recordID.length > 0) {
+                            params.recordID = recordID[0].value;
+                        }
+                        return params
+                    },
+                }
+            }
+        }
+    });
+    // 省份
+    BootstrapValidator("#provinceForm", {
+        Name: {
+            message: "该值无效",
+            validators: {
+                notEmpty: {
+                    message: "省份名称不能为空"
+                },
+                remote: {
+                    url: "/address/province/",
+                    message: "省份名称已经存在",
+                    dataType: "json",
+                    delay: 200,
+                    type: "POST",
+                    data: function() {
+
+                        var params = {
+                            action: "validator"
+                        }
+                        var xsrf = $("input[name ='_xsrf']");
+                        if (xsrf.length > 0) {
+                            params._xsrf = xsrf[0].value;
+                        }
+                        var name = $('input[name="name"]');
+                        if (name.length > 0) {
+                            params.name = name[0].value;
+                        }
+                        var recordID = $("input[name ='recordID']");
+                        if (recordID.length > 0) {
+                            params.recordID = recordID[0].value;
+                        }
+                        return params
+                    },
+                }
+            }
+        }
+    });
     //城市
     BootstrapValidator("#cityForm", {
         Country: {
@@ -344,6 +219,8 @@ $(function() {
             }
         }
     });
+
+
     // 用户form
     BootstrapValidator("#userForm", {
         Name: {

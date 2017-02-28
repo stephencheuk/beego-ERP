@@ -12,17 +12,13 @@ import (
 
 // AddressCountry 国家
 type AddressCountry struct {
-	ID         int64              `orm:"column(id);pk;auto" json:"id"`         //主键
-	CreateUser *User              `orm:"rel(fk);null" json:"-"`                //创建者
-	UpdateUser *User              `orm:"rel(fk);null" json:"-"`                //最后更新者
-	CreateDate time.Time          `orm:"auto_now_add;type(datetime)" json:"-"` //创建时间
-	UpdateDate time.Time          `orm:"auto_now;type(datetime)" json:"-"`     //最后更新时间
-	Name       string             `orm:"size(50)" xml:"name"`                  //国家名称
-	Provinces  []*AddressProvince `orm:"reverse(many)"`                        //省份
-
-	FormAction   string   `orm:"-" json:"FormAction"`   //非数据库字段，用于表示记录的增加，修改
-	ActionFields []string `orm:"-" json:"ActionFields"` //需要操作的字段,用于update时
-	ProvinceIDs  []int64  `orm:"-" json:"Provinces"`
+	ID         int64              `orm:"column(id);pk;auto" json:"id" form:"recordID"` //主键
+	CreateUser *User              `orm:"rel(fk);null" json:"-"`                        //创建者
+	UpdateUser *User              `orm:"rel(fk);null" json:"-"`                        //最后更新者
+	CreateDate time.Time          `orm:"auto_now_add;type(datetime)" json:"-"`         //创建时间
+	UpdateDate time.Time          `orm:"auto_now;type(datetime)" json:"-"`             //最后更新时间
+	Name       string             `orm:"unique;size(50)" xml:"name" form:"Name"`       //国家名称
+	Provinces  []*AddressProvince `orm:"reverse(many)"`                                //省份
 }
 
 func init() {
@@ -184,8 +180,9 @@ func GetAllAddressCountry(query map[string]interface{}, exclude map[string]inter
 func UpdateAddressCountry(obj *AddressCountry, updateUser *User) (id int64, err error) {
 	o := orm.NewOrm()
 	obj.UpdateUser = updateUser
+	fmt.Printf("%+v", obj)
 	var num int64
-	if num, err = o.Update(obj); err == nil {
+	if num, err = o.Update(obj, "Name", "UpdateDate", "UpdateUser"); err == nil {
 		fmt.Println("Number of records updated in database:", num)
 	}
 	return obj.ID, err

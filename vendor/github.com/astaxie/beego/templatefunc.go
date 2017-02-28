@@ -287,11 +287,19 @@ func parseFormToStruct(form url.Values, objT reflect.Type, objV reflect.Value) e
 		if !fieldV.CanSet() {
 			continue
 		}
-
 		fieldT := objT.Field(i)
+		fmt.Println("======================================")
+		fmt.Println(fieldT.Name)
+		fmt.Printf("%+v\n", objV)
+		fmt.Println(fieldT.Type.Kind())
+		fmt.Println(reflect.Struct)
+
 		if fieldT.Anonymous && fieldT.Type.Kind() == reflect.Struct {
 			err := parseFormToStruct(form, fieldT.Type, fieldV)
 			if err != nil {
+				fmt.Println("------------")
+				fmt.Println(err)
+
 				return err
 			}
 			continue

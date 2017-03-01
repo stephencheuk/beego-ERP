@@ -13,7 +13,7 @@
         <a href="{{.URL}}" class="btn btn-info fa fa-list pull-left">&nbsp列表</a>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
+    <input type="hidden"  class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
 
     <div class="row">
         <div class="col-md-6">
@@ -25,7 +25,7 @@
                             <label for="name" class="col-md-4 control-label label-start">库位名称<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Location}} {{.Location.Name}} {{end}}</p>
-                                <input data-type="string" class="{{.FormField}} form-control" name="Name" type="text" {{if .Location}} value="{{.Location.Name}}" {{end}} />
+                                <input class="{{.FormField}} form-control" name="Name" type="text" {{if .Location}} value="{{.Location.Name}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -34,7 +34,7 @@
                             <label for="compay" class="col-md-4 control-label label-start">所属公司<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Location .Location.Company}} {{.Location.Company.Name}}{{end}}</p>
-                                <select data-type="int" name="Company" id="compay" class="{{.FormField}} form-control select-company">
+                                <select  name="Company" id="compay" class="{{.FormField}} form-control select-company">
                                     {{if and .Location .Location.Company}}
                                     <option value="{{.Location.Company.ID}}" selected="selected">{{.Location.Company.Name}}</option>
                                     {{end}} 
@@ -49,7 +49,7 @@
                             <label for="Barcode" class="col-md-4 control-label label-start">库位编码</label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Location}} {{.Location.Barcode}} {{end}}</p>
-                                <input data-type="string" class="{{.FormField}} form-control" name="Barcode" type="text" {{if .Location}} value="{{.Location.Barcode}}" {{end}} />
+                                <input class="{{.FormField}} form-control" name="Barcode" type="text" {{if .Location}} value="{{.Location.Barcode}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                             <label for="Parent" class="col-md-4 control-label label-start">上级库位</label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Location .Location.Parent}} {{.Location.Parent.Name}}{{end}}</p>
-                                <select data-type="int" name="Parent" id="Parent" class="{{.FormField}} form-control select-stock-location">
+                                <select  name="Parent" id="Parent" class="{{.FormField}} form-control select-stock-location">
                              {{if and .Location .Location.Parent}}
                             <option value="{{.Location.Parent.ID}}" selected="selected">{{.Location.Parent.Name}}</option>
                              {{end}} 
@@ -73,7 +73,7 @@
                             <label for="Usage" class="col-md-4 control-label label-start">库位类型<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if .Location}} {{.Location.Usage}}{{end}}</p>
-                                <select data-type="string" name="Usage" id="Usage" class="{{.FormField}} form-control select-stock-location-usage">
+                                <select name="Usage" id="Usage" class="{{.FormField}} form-control select-stock-location-usage">
                              {{if .Location}} 
                             <option value="{{.Location.Usage}}" selected="selected">{{.Location.Usage}}</option>
                             {{else}}<option value="internal" selected="selected">内部库位</option>{{end}} 
@@ -121,7 +121,7 @@
                             <label for="Posx" class="col-md-4 control-label label-start">通道(X)</label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Location}} {{.Location.Posx}} {{end}}</p>
-                                <input data-type="int" class="{{.FormField}} form-control" name="Posx" type="text" {{if .Location}} value="{{.Location.Posx}}" {{end}} />
+                                <input  class="{{.FormField}} form-control" name="Posx" type="text" {{if .Location}} value="{{.Location.Posx}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -130,7 +130,7 @@
                             <label for="Posy" class="col-md-4 control-label label-start">货架(Y)</label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Location}} {{.Location.Posy}} {{end}}</p>
-                                <input data-type="int" class="{{.FormField}} form-control" name="Posy" type="text" {{if .Location}} value="{{.Location.Posy}}" {{end}} />
+                                <input  class="{{.FormField}} form-control" name="Posy" type="text" {{if .Location}} value="{{.Location.Posy}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -141,7 +141,7 @@
                             <label for="Posz" class="col-md-4 control-label label-start">层</label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Location}} {{.Location.Posz}} {{end}}</p>
-                                <input data-type="int" class="{{.FormField}} form-control" name="Posz" type="text" {{if .Location}} value="{{.Location.Posz}}" {{end}} />
+                                <input  class="{{.FormField}} form-control" name="Posz" type="text" {{if .Location}} value="{{.Location.Posz}}" {{end}} />
                             </div>
                         </div>
                     </div>

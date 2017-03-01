@@ -12,28 +12,28 @@ import (
 // User table
 // 用户表
 type User struct {
-	ID              int64       `orm:"column(id);pk;auto" json:"id"`                      //主键
-	CreateUser      *User       `orm:"rel(fk);null" json:"-"`                             //创建者
-	UpdateUser      *User       `orm:"rel(fk);null" json:"-"`                             //最后更新者
-	CreateDate      time.Time   `orm:"auto_now_add;type(datetime)" json:"-"`              //创建时间
-	UpdateDate      time.Time   `orm:"auto_now;type(datetime)" json:"-"`                  //最后更新时间
-	Name            string      `orm:"size(20)" xml:"name" json:"Name"`                   //用户名
-	Company         *Company    `orm:"rel(fk);null" json:"-"`                             //公司
-	NameZh          string      `orm:"size(20)"  xml:"NameZh" json:"NameZh"`              //中文用户名
-	Department      *Department `orm:"rel(fk);null;" json:"-"`                            //部门
-	Email           string      `orm:"size(20)" xml:"email" json:"Email"`                 //邮箱
-	Mobile          string      `orm:"size(20);default(\"\")" xml:"mobile" json:"Mobile"` //手机号码
-	Tel             string      `orm:"size(20);default(\"\")" json:"Tel" `                //固定号码
-	Password        string      `xml:"password" json:"Password"`                          //密码
-	ConfirmPassword string      `orm:"-" xml:"ConfirmPassword" json:"ConfirmPassword"`    //确认密码,数据库中不保存
-	Roles           []*Role     `orm:"rel(m2m)"`                                          //用户拥有的角色
-	Teams           []*Team     `orm:"rel(m2m)"`                                          //团队
-	Groups          []*Group    `orm:"rel(m2m)"`                                          //用户组
-	IsAdmin         bool        `orm:"default(false)" xml:"isAdmin" json:"IsAdmin"`       //是否为超级用户
-	Active          bool        `orm:"default(true)" xml:"active" json:"Active"`          //有效
-	Qq              string      `orm:"default()" xml:"qq" json:"Qq"`                  //QQ
-	WeChat          string      `orm:"default()" xml:"wechat" json:"WeChat"`          //微信
-	Position        *Position   `orm:"rel(fk);null;" json:"-" `                           //职位
+	ID              int64       `orm:"column(id);pk;auto" json:"id" form:"recordID"`                          //主键
+	CreateUser      *User       `orm:"rel(fk);null" json:"-"`                                                 //创建者
+	UpdateUser      *User       `orm:"rel(fk);null" json:"-"`                                                 //最后更新者
+	CreateDate      time.Time   `orm:"auto_now_add;type(datetime)" json:"-"`                                  //创建时间
+	UpdateDate      time.Time   `orm:"auto_now;type(datetime)" json:"-"`                                      //最后更新时间
+	Name            string      `orm:"size(20)" xml:"name" json:"Name" form:"Name"`                           //用户名
+	Company         *Company    `orm:"rel(fk);null" json:"-"`                                                 //公司
+	NameZh          string      `orm:"size(20)"  xml:"NameZh" json:"NameZh" form:"NameZh"`                    //中文用户名
+	Department      *Department `orm:"rel(fk);null;" json:"-"`                                                //部门
+	Email           string      `orm:"size(20)" xml:"email" json:"Email" form:"Email"`                        //邮箱
+	Mobile          string      `orm:"size(20);default(\"\")" xml:"mobile" json:"Mobile" form:"Mobile"`       //手机号码
+	Tel             string      `orm:"size(20);default(\"\")" json:"Tel" form:"Tel"`                          //固定号码
+	Password        string      `xml:"password" json:"Password" form:"Password"`                              //密码
+	ConfirmPassword string      `orm:"-" xml:"ConfirmPassword" json:"ConfirmPassword" form:"ConfirmPassword"` //确认密码,数据库中不保存
+	Roles           []*Role     `orm:"rel(m2m)"`                                                              //用户拥有的角色
+	Teams           []*Team     `orm:"rel(m2m)"`                                                              //团队
+	Groups          []*Group    `orm:"rel(m2m)"`                                                              //用户组
+	IsAdmin         bool        `orm:"default(false)" xml:"isAdmin" json:"IsAdmin" form:"IsAdmin"`            //是否为超级用户
+	Active          bool        `orm:"default(true)" xml:"active" json:"Active" form:"Active"`                //有效
+	Qq              string      `orm:"default()" xml:"qq" json:"Qq" form:"Qq"`                                //QQ
+	WeChat          string      `orm:"default()" xml:"wechat" json:"WeChat" form:"WeChat"`                    //微信
+	Position        *Position   `orm:"rel(fk);null;" json:"-"`                                                //职位
 
 	FormAction   string             `orm:"-" json:"FormAction"`   //非数据库字段，用于表示记录的增加，修改
 	ActionFields []string           `orm:"-" json:"ActionFields"` //需要操作的字段,用于update时
@@ -73,14 +73,18 @@ func AddUser(obj *User, addUser *User) (id int64, err error) {
 	password := utils.PasswordMD5(obj.Password, obj.Mobile)
 	obj.Password = password
 	if obj.CompanyID > 0 {
-		obj.Company, _ = GetCompanyByID(obj.CompanyID)
+		obj.Company = new(Company)
+		obj.Company.ID = obj.CompanyID
 	}
 	if obj.DepartmentID > 0 {
-		obj.Department, _ = GetDepartmentByID(obj.DepartmentID)
+		obj.Department = new(Department)
+		obj.Department.ID = obj.DepartmentID
 	}
 	if obj.PositionID > 0 {
-		obj.Position, _ = GetPositionByID(obj.PositionID)
+		obj.Position = new(Position)
+		obj.Position.ID = obj.PositionID
 	}
+
 	if id, err = o.Insert(obj); err == nil {
 		obj.ID = id
 		if createTeamRecords, ok := obj.TeamIDs["create"]; ok {
@@ -259,7 +263,6 @@ func GetAllUser(query map[string]interface{}, exclude map[string]interface{}, co
 // the record to be updated doesn't exist
 func UpdateUser(obj *User, updateUser *User) (err error) {
 	o := orm.NewOrm()
-	v := User{ID: obj.ID}
 	errBegin := o.Begin()
 	defer func() {
 		if err != nil {
@@ -271,62 +274,74 @@ func UpdateUser(obj *User, updateUser *User) (err error) {
 	if errBegin != nil {
 		return errBegin
 	}
-	// ascertain id exists in the database
-	if err = o.Read(&v); err == nil {
-		if obj.CompanyID > 0 {
-			obj.Company, _ = GetCompanyByID(obj.CompanyID)
-		}
-		if obj.DepartmentID > 0 {
-			obj.Department, _ = GetDepartmentByID(obj.DepartmentID)
-		}
-		if obj.PositionID > 0 {
-			obj.Position, _ = GetPositionByID(obj.PositionID)
-		}
-		if createTeamRecords, ok := obj.TeamIDs["create"]; ok {
-			m2mTeams := o.QueryM2M(obj, "Teams")
-			for _, teamID := range createTeamRecords {
-				if team, err := GetTeamByID(int64(teamID)); err == nil {
-					m2mTeams.Add(team)
-				} else {
-					utils.LogOut("error", "add user teams failed:"+err.Error())
-				}
-			}
-		}
-		if deleteTeamRecords, ok := obj.TeamIDs["delete"]; ok {
-			m2mTeams := o.QueryM2M(obj, "Teams")
-			for _, teamID := range deleteTeamRecords {
-				if team, err := GetTeamByID(int64(teamID)); err == nil {
-					m2mTeams.Remove(team)
-				} else {
-					utils.LogOut("error", "delete user teams failed:"+err.Error())
-
-				}
-			}
-		}
-		if createRoleRecords, ok := obj.RoleIDs["create"]; ok {
-			m2mRoles := o.QueryM2M(obj, "Roles")
-			for _, RoleID := range createRoleRecords {
-				if role, err := GetRoleByID(int64(RoleID)); err == nil {
-					m2mRoles.Add(role)
-				} else {
-					utils.LogOut("error", "add user roles failed:"+err.Error())
-				}
-			}
-		}
-		if deleteRoleRecords, ok := obj.RoleIDs["delete"]; ok {
-			m2mRoles := o.QueryM2M(obj, "Roles")
-			for _, RoleID := range deleteRoleRecords {
-				if role, err := GetRoleByID(int64(RoleID)); err == nil {
-					m2mRoles.Remove(role)
-				} else {
-					utils.LogOut("error", "delete user roles failed:"+err.Error())
-				}
-			}
-		}
-		if _, err = o.Update(obj, append(obj.ActionFields, "UpdateUser", "UpdateDate")...); err != nil {
-			utils.LogOut("error", "update user fields failed:"+err.Error())
-		}
+	if obj.CompanyID > 0 {
+		obj.Company = new(Company)
+		obj.Company.ID = obj.CompanyID
 	}
+	if obj.DepartmentID > 0 {
+		obj.Department = new(Department)
+		obj.Department.ID = obj.DepartmentID
+	}
+	if obj.PositionID > 0 {
+		obj.Position = new(Position)
+		obj.Position.ID = obj.PositionID
+	}
+	// ascertain id exists in the database
+	// if err = o.Read(&v); err == nil {
+	// 	if obj.CompanyID > 0 {
+	// 		obj.Company, _ = GetCompanyByID(obj.CompanyID)
+	// 	}
+	// 	if obj.DepartmentID > 0 {
+	// 		obj.Department, _ = GetDepartmentByID(obj.DepartmentID)
+	// 	}
+	// 	if obj.PositionID > 0 {
+	// 		obj.Position, _ = GetPositionByID(obj.PositionID)
+	// 	}
+	// 	if createTeamRecords, ok := obj.TeamIDs["create"]; ok {
+	// 		m2mTeams := o.QueryM2M(obj, "Teams")
+	// 		for _, teamID := range createTeamRecords {
+	// 			if team, err := GetTeamByID(int64(teamID)); err == nil {
+	// 				m2mTeams.Add(team)
+	// 			} else {
+	// 				utils.LogOut("error", "add user teams failed:"+err.Error())
+	// 			}
+	// 		}
+	// 	}
+	// 	if deleteTeamRecords, ok := obj.TeamIDs["delete"]; ok {
+	// 		m2mTeams := o.QueryM2M(obj, "Teams")
+	// 		for _, teamID := range deleteTeamRecords {
+	// 			if team, err := GetTeamByID(int64(teamID)); err == nil {
+	// 				m2mTeams.Remove(team)
+	// 			} else {
+	// 				utils.LogOut("error", "delete user teams failed:"+err.Error())
+
+	// 			}
+	// 		}
+	// 	}
+	// 	if createRoleRecords, ok := obj.RoleIDs["create"]; ok {
+	// 		m2mRoles := o.QueryM2M(obj, "Roles")
+	// 		for _, RoleID := range createRoleRecords {
+	// 			if role, err := GetRoleByID(int64(RoleID)); err == nil {
+	// 				m2mRoles.Add(role)
+	// 			} else {
+	// 				utils.LogOut("error", "add user roles failed:"+err.Error())
+	// 			}
+	// 		}
+	// 	}
+	// 	if deleteRoleRecords, ok := obj.RoleIDs["delete"]; ok {
+	// 		m2mRoles := o.QueryM2M(obj, "Roles")
+	// 		for _, RoleID := range deleteRoleRecords {
+	// 			if role, err := GetRoleByID(int64(RoleID)); err == nil {
+	// 				m2mRoles.Remove(role)
+	// 			} else {
+	// 				utils.LogOut("error", "delete user roles failed:"+err.Error())
+	// 			}
+	// 		}
+	// 	}
+	// 	if _, err = o.Update(obj, append(obj.ActionFields, "UpdateUser", "UpdateDate")...); err != nil {
+	// 		utils.LogOut("error", "update user fields failed:"+err.Error())
+	// 	}
+	// }
 	if err != nil {
 		return err
 	}

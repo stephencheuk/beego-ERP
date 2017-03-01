@@ -12,8 +12,8 @@
         <a href="{{.URL}}" class="btn btn-info fa fa-list pull-left">&nbsp列表</a>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}">
-    <input type="hidden" data-type="string" name="_method" class="{{.FormField}}" value="PUT"> {{end}}
+    <input type="hidden"  name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}">
+    <input type="hidden" name="_method" class="{{.FormField}}" value="PUT"> {{end}}
     <div class="row">
         <div class="col-md-6">
             <fieldset>
@@ -24,7 +24,7 @@
                             <label for="name" class="col-md-2 control-label label-start">{{if .IsCustomer }}客户名称{{else}}供应商名称{{end}}<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-10">
                                 <p class="p-form-control">{{if .Partner}} {{.Partner.Name}} {{end}}</p>
-                                <input data-type="string" data-oldvalue="{{.Partner.Name}}" class="form-control {{.FormField}}" id="name" name="Name" type="text" {{if .Partner}} value="{{.Partner.Name}}" {{end}} />
+                                <input data-oldvalue="{{.Partner.Name}}" class="form-control {{.FormField}}" id="name" name="Name" type="text" {{if .Partner}} value="{{.Partner.Name}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -35,7 +35,7 @@
                             <label for="parent" class="col-md-4 control-label label-start">上级(母公司)</label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if and .Partner .Partner.Parent}} {{.Partner.Parent.Name}}{{else}} - {{end}}</p>
-                                <select name="Parent" data-type="int" id="parent" {{if and .Partner .Partner.Parent}} data-oldvalue="{{.Partner.Parent.ID}}" {{end}} class="form-control select-partner {{.FormField}}">
+                                <select name="Parent"  id="parent" {{if and .Partner .Partner.Parent}} data-oldvalue="{{.Partner.Parent.ID}}" {{end}} class="form-control select-partner {{.FormField}}">
                             {{if and .Partner .Partner.Parent}} 
                             <option value="{{.Partner.Parent.ID}}}" selected="selected">{{.Partner.Parent.Name}}</option>
                             {{end}} 
@@ -87,7 +87,7 @@
                             <label for="Mobile" class="col-md-4 control-label label-start">手机号码<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Partner}} {{.Partner.Mobile}} {{end}}</p>
-                                <input data-type="string" class="form-control {{.FormField}}" name="Mobile" type="text" {{if .Partner}} value="{{.Partner.Mobile}}" {{end}} />
+                                <input class="form-control {{.FormField}}" name="Mobile" type="text" {{if .Partner}} value="{{.Partner.Mobile}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                             <label for="Tel" class="col-md-4 control-label label-start">座机 </label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Partner}} {{.Partner.Tel}} {{end}}</p>
-                                <input data-type="string" class="form-control {{.FormField}}" name="Tel" type="text" {{if .Partner}} value="{{.Partner.Tel}}" {{end}} />
+                                <input class="form-control {{.FormField}}" name="Tel" type="text" {{if .Partner}} value="{{.Partner.Tel}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -107,7 +107,7 @@
                             <label for="Qq" class="col-md-4 control-label label-start">QQ </label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Partner}} {{.Partner.Qq}} {{end}}</p>
-                                <input data-type="string" class="form-control {{.FormField}}" name="Qq" type="text" {{if .Partner}} value="{{.Partner.Qq}}" {{end}} />
+                                <input class="form-control {{.FormField}}" name="Qq" type="text" {{if .Partner}} value="{{.Partner.Qq}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                             <label for="WeChat" class="col-md-4 control-label label-start">微信 </label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Partner}} {{.Partner.WeChat}} {{end}}</p>
-                                <input data-type="string" class="form-control {{.FormField}}" name="WeChat" type="text" {{if .Partner}} value="{{.Partner.WeChat}}" {{end}} />
+                                <input class="form-control {{.FormField}}" name="WeChat" type="text" {{if .Partner}} value="{{.Partner.WeChat}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -127,7 +127,7 @@
                             <label for="Email" class="col-md-4 control-label label-start">邮箱 </label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Partner}} {{.Partner.Email}} {{end}}</p>
-                                <input data-type="string" class="form-control {{.FormField}}" name="Email" type="text" {{if .Partner}} value="{{.Partner.Email}}" {{end}} />
+                                <input class="form-control {{.FormField}}" name="Email" type="text" {{if .Partner}} value="{{.Partner.Email}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -143,7 +143,7 @@
                             <label for="country" class="col-md-4 control-label label-start">国家<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Partner .Partner.Country}} {{.Partner.Country.Name}}{{end}}</p>
-                                <select data-type="int" name="Country" id="country" class="{{.FormField}} form-control select-address-country">
+                                <select  name="Country" id="country" class="{{.FormField}} form-control select-address-country">
                              {{if and .Partner .Partner.Country}}
                             <option value="{{.Partner.Country.ID}}" selected="selected">{{.Partner.Country.Name}}</option>
                             {{else}}<option value="1" selected="selected">中国</option>{{end}} 
@@ -156,7 +156,7 @@
                             <label for="province" class="col-md-4 control-label label-start">省份<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Partner .Partner.Province}} {{.Partner.Province.Name}}{{end}}</p>
-                                <select data-type="int" name="Province" id="province" class="{{.FormField}} form-control select-address-province">
+                                <select  name="Province" id="province" class="{{.FormField}} form-control select-address-province">
                              {{if and .Partner .Partner.Province}}
                             <option value="{{.Partner.Province.ID}}" selected="selected">{{.Partner.Province.Name}}</option>
                              {{end}} 
@@ -171,7 +171,7 @@
                             <label for="city" class="col-md-4 control-label label-start">城市<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Partner .Partner.City}} {{.Partner.City.Name}}{{end}}</p>
-                                <select data-type="int" name="City" id="city" class="{{.FormField}} form-control select-address-city">
+                                <select  name="City" id="city" class="{{.FormField}} form-control select-address-city">
                              {{if and .Partner .Partner.City}}
                             <option value="{{.Partner.City.ID}}" selected="selected">{{.Partner.City.Name}}</option>
                              {{end}} 
@@ -184,7 +184,7 @@
                             <label for="district" class="col-md-4 control-label label-start">区县</label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Partner .Partner.District}} {{.Partner.District.Name}}{{end}}</p>
-                                <select data-type="int" name="District" id="district" class="{{.FormField}} form-control select-address-district">
+                                <select  name="District" id="district" class="{{.FormField}} form-control select-address-district">
                              {{if and .Partner .Partner.District}}
                             <option value="{{.Partner.District.ID}}" selected="selected">{{.Partner.District.Name}}</option>
                              {{end}} 
@@ -199,7 +199,7 @@
                             <label for="Street" class="col-md-2 control-label label-start">街道<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-10">
                                 <p class="p-form-control">{{if .Partner}} {{.Partner.Street}} {{end}}</p>
-                                <textarea data-type="string" class="{{.FormField}} form-control" name="Street" rows="2" placeholder="请输入街道信息">{{if .Partner}}  {{.Partner.Street}} {{end}}</textarea>
+                                <textarea class="{{.FormField}} form-control" name="Street" rows="2" placeholder="请输入街道信息">{{if .Partner}}  {{.Partner.Street}} {{end}}</textarea>
                             </div>
                         </div>
                     </div>

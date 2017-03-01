@@ -13,7 +13,7 @@
         <a href="{{.URL}}" class="btn btn-info fa fa-list pull-left">&nbsp列表</a>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
+    <input type="hidden"  class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
 
     <div class="row">
         <div class="col-md-6">
@@ -25,7 +25,7 @@
                             <label for="name" class="col-md-4 control-label label-start">仓库名称<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Warehouse}} {{.Warehouse.Name}} {{end}}</p>
-                                <input data-type="string" class="{{.FormField}} form-control" name="Name" type="text" {{if .Warehouse}} value="{{.Warehouse.Name}}" {{end}} />
+                                <input class="{{.FormField}} form-control" name="Name" type="text" {{if .Warehouse}} value="{{.Warehouse.Name}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -34,7 +34,7 @@
                             <label for="compay" class="col-md-4 control-label label-start">所属公司<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Warehouse .Warehouse.Company}} {{.Warehouse.Company.Name}}{{end}}</p>
-                                <select data-type="int" name="Company" id="compay" class="{{.FormField}} form-control select-company">
+                                <select  name="Company" id="compay" class="{{.FormField}} form-control select-company">
                                     {{if and .Warehouse .Warehouse.Company}}
                                     <option value="{{.Warehouse.Company.ID}}" selected="selected">{{.Warehouse.Company.Name}}</option>
                                     {{end}} 
@@ -49,7 +49,7 @@
                             <label for="code" class="col-md-4 control-label label-start">仓库编码<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Warehouse}} {{.Warehouse.Code}} {{end}}</p>
-                                <input data-type="string" class="{{.FormField}} form-control" name="Code" type="text" {{if .Warehouse}} value="{{.Warehouse.Code}}" {{end}} />
+                                <input class="{{.FormField}} form-control" name="Code" type="text" {{if .Warehouse}} value="{{.Warehouse.Code}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                             <label for="Location" class="col-md-4 control-label label-start">发货库位</label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Warehouse .Warehouse.Location}} {{.Warehouse.Location.Name}}{{end}}</p>
-                                <select data-type="int" name="Location" id="Location" class="{{.FormField}} form-control select-stock-location">
+                                <select  name="Location" id="Location" class="{{.FormField}} form-control select-stock-location">
                              {{if and .Warehouse .Warehouse.Location}}
                             <option value="{{.Warehouse.Location.ID}}" selected="selected">{{.Warehouse.Location.Name}}</option>
                              {{end}} 
@@ -78,7 +78,7 @@
                             <label for="country" class="col-md-4 control-label label-start">国家<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Warehouse .Warehouse.Country}} {{.Warehouse.Country.Name}}{{end}}</p>
-                                <select data-type="int" name="Country" id="country" class="{{.FormField}} form-control select-address-country">
+                                <select  name="Country" id="country" class="{{.FormField}} form-control select-address-country">
                              {{if and .Warehouse .Warehouse.Country}}
                             <option value="{{.Warehouse.Country.ID}}" selected="selected">{{.Warehouse.Country.Name}}</option>
                             {{else}}<option value="1" selected="selected">中国</option>{{end}} 
@@ -91,7 +91,7 @@
                             <label for="province" class="col-md-4 control-label label-start">省份<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Warehouse .Warehouse.Province}} {{.Warehouse.Province.Name}}{{end}}</p>
-                                <select data-type="int" name="Province" id="province" class="{{.FormField}} form-control select-address-province">
+                                <select  name="Province" id="province" class="{{.FormField}} form-control select-address-province">
                              {{if and .Warehouse .Warehouse.Province}}
                             <option value="{{.Warehouse.Province.ID}}" selected="selected">{{.Warehouse.Province.Name}}</option>
                              {{end}} 
@@ -106,7 +106,7 @@
                             <label for="city" class="col-md-4 control-label label-start">城市<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Warehouse .Warehouse.City}} {{.Warehouse.City.Name}}{{end}}</p>
-                                <select data-type="int" name="City" id="city" class="{{.FormField}} form-control select-address-city">
+                                <select  name="City" id="city" class="{{.FormField}} form-control select-address-city">
                              {{if and .Warehouse .Warehouse.City}}
                             <option value="{{.Warehouse.City.ID}}" selected="selected">{{.Warehouse.City.Name}}</option>
                              {{end}} 
@@ -119,7 +119,7 @@
                             <label for="district" class="col-md-4 control-label label-start">区县</label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Warehouse .Warehouse.District}} {{.Warehouse.District.Name}}{{end}}</p>
-                                <select data-type="int" name="District" id="district" class="{{.FormField}} form-control select-address-district">
+                                <select  name="District" id="district" class="{{.FormField}} form-control select-address-district">
                              {{if and .Warehouse .Warehouse.District}}
                             <option value="{{.Warehouse.District.ID}}" selected="selected">{{.Warehouse.District.Name}}</option>
                              {{end}} 
@@ -134,7 +134,7 @@
                             <label for="Street" class="col-md-2 control-label label-start">街道<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-10">
                                 <p class="p-form-control">{{if .Warehouse}} {{.Warehouse.Street}} {{end}}</p>
-                                <textarea data-type="string" class="{{.FormField}} form-control" name="Street" rows="2" placeholder="请输入街道信息">{{if .Warehouse}}  {{.Warehouse.Street}} {{end}}</textarea>
+                                <textarea class="{{.FormField}} form-control" name="Street" rows="2" placeholder="请输入街道信息">{{if .Warehouse}}  {{.Warehouse.Street}} {{end}}</textarea>
                             </div>
                         </div>
                     </div>

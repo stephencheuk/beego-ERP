@@ -13,7 +13,7 @@
         <a href="{{.URL}}" class="btn btn-info fa fa-list pull-left">&nbsp列表</a>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
+    <input type="hidden"  class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
 
     <div class="row">
         <div class="col-md-6">
@@ -25,7 +25,7 @@
                             <label for="name" class="col-md-4 control-label label-start">权限名称<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Permission}} {{.Permission.Name}} {{end}}</p>
-                                <input data-type="string" class="{{.FormField}} form-control" id="name" name="Name" type="text" {{if .Permission}} value="{{.Permission.Name}}" {{end}} />
+                                <input class="{{.FormField}} form-control" id="name" name="Name" type="text" {{if .Permission}} value="{{.Permission.Name}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -34,7 +34,7 @@
                             <label for="source" class="col-md-4 control-label label-start">系统资源<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if and .Permission .Permission.Source}} {{.Permission.Source.Name}} {{end}}</p>
-                                <select data-type="int" {{if and .Permission .Permission.Source}} data-oldvalue="{{.Permission.Source.ID}}" {{end}} name="Source" id="Source" class="{{.FormField}} form-control select-source">
+                                <select  {{if and .Permission .Permission.Source}} data-oldvalue="{{.Permission.Source.ID}}" {{end}} name="Source" id="Source" class="{{.FormField}} form-control select-source">
                                     {{if and .Permission .Permission.Source}}
                                     <option value="{{.Permission.Source.ID}}" selected="selected">{{.Permission.Source.Name}}</option>
                                     {{end}}
@@ -109,9 +109,9 @@
                 <div class="form-group">
                     <label for="type" class="col-md-2 control-label label-start">权限类型</label>
                     <div class="col-md-10">
-                        <input data-type="string" class="{{.FormField}} input-radio" {{if and .Product .Product.ProductType}} data-oldvalue="{{.Product.ProductType}}" {{else}}data-oldvalue="stock" {{end}} type="radio" id="stock-radio" value="stock" name="ProductType">
+                        <input class="{{.FormField}} input-radio" {{if and .Product .Product.ProductType}} data-oldvalue="{{.Product.ProductType}}" {{else}}data-oldvalue="stock" {{end}} type="radio" id="stock-radio" value="stock" name="ProductType">
                         <label class="input-radio-label" for="stock-radio">角色权限</label>
-                        <input data-type="string" class="{{.FormField}} input-radio" {{if and .Product .Product.ProductType}} data-oldvalue="{{.Product.ProductType}}" {{else}}data-oldvalue="stock" {{end}} type="radio" id="consume-radio" value="consume" name="ProductType">
+                        <input class="{{.FormField}} input-radio" {{if and .Product .Product.ProductType}} data-oldvalue="{{.Product.ProductType}}" {{else}}data-oldvalue="stock" {{end}} type="radio" id="consume-radio" value="consume" name="ProductType">
                         <label class="input-radio-label" for="consume-radio">私有权限</label>
                     </div>
                 </div>

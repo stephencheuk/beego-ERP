@@ -9,10 +9,12 @@ import (
 	"strings"
 )
 
+// AddressDistrictController address district
 type AddressDistrictController struct {
 	cb.BaseController
 }
 
+// Post post request
 func (ctl *AddressDistrictController) Post() {
 	ctl.URL = "/address/district/"
 	ctl.Data["URL"] = ctl.URL
@@ -28,6 +30,8 @@ func (ctl *AddressDistrictController) Post() {
 		ctl.PostList()
 	}
 }
+
+// Get get request
 func (ctl *AddressDistrictController) Get() {
 	ctl.URL = "/address/district/"
 	ctl.PageName = "区县管理"
@@ -52,19 +56,18 @@ func (ctl *AddressDistrictController) Get() {
 	ctl.Data["MenuAddressDistrictActive"] = "active"
 }
 
-// Put 修改产品款式
+// Put 修改区县信息
 func (ctl *AddressDistrictController) Put() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
 	district := new(md.AddressDistrict)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), district); err == nil {
+	if err = ctl.ParseForm(district); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(district)).Type().Name()
-		if id, err = md.AddAddressDistrict(district, &ctl.User); err == nil {
+		if id, err = md.UpdateAddressDistrict(district, &ctl.User); err == nil {
 			result["code"] = "success"
 			result["location"] = ctl.URL + strconv.FormatInt(id, 10) + "?action=detail"
 		} else {
@@ -80,15 +83,17 @@ func (ctl *AddressDistrictController) Put() {
 	ctl.Data["json"] = result
 	ctl.ServeJSON()
 }
+
+// PostCreate 创建区县
 func (ctl *AddressDistrictController) PostCreate() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
 	district := new(md.AddressDistrict)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), district); err == nil {
+	if err = ctl.ParseForm(district); err == nil {
+
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(district)).Type().Name()
 		if id, err = md.AddAddressDistrict(district, &ctl.User); err == nil {
@@ -107,6 +112,8 @@ func (ctl *AddressDistrictController) PostCreate() {
 	ctl.Data["json"] = result
 	ctl.ServeJSON()
 }
+
+// Edit edit view
 func (ctl *AddressDistrictController) Edit() {
 	id := ctl.Ctx.Input.Param(":id")
 	if id != "" {
@@ -123,12 +130,16 @@ func (ctl *AddressDistrictController) Edit() {
 	ctl.Layout = "base/base.html"
 	ctl.TplName = "address/address_district_form.html"
 }
+
+// Detail detail view
 func (ctl *AddressDistrictController) Detail() {
 	ctl.Edit()
 	ctl.Data["Readonly"] = true
 	ctl.Data["FormTreeField"] = "form-tree-edit"
 	ctl.Data["Action"] = "detail"
 }
+
+// Create create view
 func (ctl *AddressDistrictController) Create() {
 	ctl.Data["Action"] = "create"
 	ctl.Data["Readonly"] = false
@@ -139,25 +150,36 @@ func (ctl *AddressDistrictController) Create() {
 	ctl.TplName = "address/address_district_form.html"
 }
 
+// Validator Validator
 func (ctl *AddressDistrictController) Validator() {
-	name := strings.TrimSpace(ctl.GetString("Name"))
+	query := make(map[string]interface{})
+	exclude := make(map[string]interface{})
+	cond := make(map[string]map[string]interface{})
+	condAnd := make(map[string]interface{})
+	fields := make([]string, 0, 0)
+	sortby := make([]string, 0, 0)
+	order := make([]string, 0, 0)
+
 	recordID, _ := ctl.GetInt64("recordID")
 	result := make(map[string]bool)
-	obj, err := md.GetAddressDistrictByName(name)
-	if err != nil {
-		result["valid"] = true
-	} else {
-		if obj.Name == name {
-			if recordID == obj.ID {
+	if cityID, err := ctl.GetInt64("CityID"); err == nil {
+		query["City.Id"] = cityID
+	}
+	if name := strings.TrimSpace(ctl.GetString("Name")); name != "" {
+		condAnd["Name"] = name
+	}
+	if _, arrs, err := md.GetAllAddressDistrict(query, exclude, cond, fields, sortby, order, 0, 2); err == nil {
+		if len(arrs) == 1 {
+			if arrs[0].ID == recordID {
 				result["valid"] = true
 			} else {
 				result["valid"] = false
 			}
-
 		} else {
 			result["valid"] = true
 		}
-
+	} else {
+		result["valid"] = true
 	}
 	ctl.Data["json"] = result
 	ctl.ServeJSON()
@@ -202,6 +224,8 @@ func (ctl *AddressDistrictController) addressTemplateList(query map[string]inter
 	}
 	return result, err
 }
+
+// PostList post request get list
 func (ctl *AddressDistrictController) PostList() {
 	query := make(map[string]interface{})
 	exclude := make(map[string]interface{})
@@ -257,6 +281,7 @@ func (ctl *AddressDistrictController) PostList() {
 
 }
 
+// GetList list view
 func (ctl *AddressDistrictController) GetList() {
 	viewType := ctl.Input().Get("view")
 	if viewType == "" || viewType == "table" {

@@ -171,13 +171,12 @@
      var selectId = this.attr("id");
      if (selectId == "district") {
          var city = $("#city");
-         if (city.length < 1) {
-             toastr.error("没有<strong>城市</strong>选项", "错误");
-             return;
-         } else {
+         console.log(city);
+         if (city.length > 0) {
+
              city = city.val();
              if (city == null || city == undefined) {
-                 toastr.error("请按照<strong>国家->省份->城市->区县</strong>的顺序选择", "错误");
+                 toastr.error("请先选择<strong>城市</strong>", "错误");
                  return;
              } else {
                  selectParams.CityID = parseInt(city);
@@ -185,13 +184,10 @@
          }
      } else if (selectId == "city") {
          var province = $("#province");
-         if (province.length < 1) {
-             toastr.error("没有<strong>省份</strong>选项", "错误");
-             return;
-         } else {
+         if (province.length > 0) {
              province = province.val();
              if (province == null || province == undefined) {
-                 toastr.error("请按照<strong>国家->省份->城市->区县</strong>的顺序选择", "错误");
+                 toastr.error("请先选择<strong>省份</strong>", "错误");
                  return;
              } else {
                  selectParams.ProvinceID = parseInt(province);
@@ -199,13 +195,11 @@
          }
      } else if (selectId == "province") {
          var country = $("#country");
-         if (country.length < 1) {
-             toastr.error("没有<strong>国家</strong>选项", "错误");
-             return;
-         } else {
+         if (country.length > 0) {
+
              country = country.val();
              if (country == null || country == undefined) {
-                 toastr.error("请按照<strong>国家->省份->城市->区县</strong>的顺序选择", "错误");
+                 toastr.error("请先选择<strong>国家</strong>", "错误");
                  return;
              } else {
                  selectParams.CountryID = parseInt(country);

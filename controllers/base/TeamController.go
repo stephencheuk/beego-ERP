@@ -14,6 +14,7 @@ type TeamController struct {
 	BaseController
 }
 
+// Post post request
 func (ctl *TeamController) Post() {
 	ctl.URL = "/team/"
 	ctl.Data["URL"] = ctl.URL
@@ -29,6 +30,8 @@ func (ctl *TeamController) Post() {
 		ctl.PostList()
 	}
 }
+
+// Get get request
 func (ctl *TeamController) Get() {
 	ctl.URL = "/team/"
 	ctl.PageName = "团队管理"
@@ -56,16 +59,16 @@ func (ctl *TeamController) Get() {
 // Put 修改产品款式
 func (ctl *TeamController) Put() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
 	team := new(md.Team)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), team); err == nil {
+	if err = ctl.ParseForm(team); err == nil {
+
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(team)).Type().Name()
-		if id, err = md.AddTeam(team, &ctl.User); err == nil {
+		if id, err = md.UpdateTeam(team, &ctl.User); err == nil {
 			result["code"] = "success"
 			result["location"] = ctl.URL + strconv.FormatInt(id, 10) + "?action=detail"
 		} else {
@@ -81,15 +84,16 @@ func (ctl *TeamController) Put() {
 	ctl.Data["json"] = result
 	ctl.ServeJSON()
 }
+
+// PostCreate post request create team
 func (ctl *TeamController) PostCreate() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
 	team := new(md.Team)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), team); err == nil {
+	if err = ctl.ParseForm(team); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(team)).Type().Name()
 		if id, err = md.AddTeam(team, &ctl.User); err == nil {
@@ -108,6 +112,8 @@ func (ctl *TeamController) PostCreate() {
 	ctl.Data["json"] = result
 	ctl.ServeJSON()
 }
+
+// Edit edit view
 func (ctl *TeamController) Edit() {
 	id := ctl.Ctx.Input.Param(":id")
 	if id != "" {
@@ -125,12 +131,16 @@ func (ctl *TeamController) Edit() {
 	ctl.Layout = "base/base.html"
 	ctl.TplName = "user/team_form.html"
 }
+
+// Detail detail view
 func (ctl *TeamController) Detail() {
 	ctl.Edit()
 	ctl.Data["Readonly"] = true
 	ctl.Data["FormTreeField"] = "form-tree-edit"
 	ctl.Data["Action"] = "detail"
 }
+
+// Create create viw
 func (ctl *TeamController) Create() {
 	ctl.Data["Action"] = "create"
 	ctl.Data["Readonly"] = false
@@ -141,6 +151,7 @@ func (ctl *TeamController) Create() {
 	ctl.TplName = "user/team_form.html"
 }
 
+// Validator Validator
 func (ctl *TeamController) Validator() {
 	name := strings.TrimSpace(ctl.GetString("Name"))
 	recordID, _ := ctl.GetInt64("recordID")
@@ -208,6 +219,8 @@ func (ctl *TeamController) addressTemplateList(query map[string]interface{}, exc
 	}
 	return result, err
 }
+
+// PostList post request get list
 func (ctl *TeamController) PostList() {
 	query := make(map[string]interface{})
 	exclude := make(map[string]interface{})
@@ -260,6 +273,7 @@ func (ctl *TeamController) PostList() {
 
 }
 
+// GetList list view
 func (ctl *TeamController) GetList() {
 	viewType := ctl.Input().Get("view")
 	if viewType == "" || viewType == "table" {

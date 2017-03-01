@@ -18,8 +18,8 @@
         </nav>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}">
-    <input type="hidden" data-type="string" name="_method" class="{{.FormField}}" value="PUT"> {{end}}
+    <input type="hidden"  name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}">
+    <input type="hidden" name="_method" class="{{.FormField}}" value="PUT"> {{end}}
     <div class="row">
         <div class="col-md-4 text-center">
             <div class="preview ">
@@ -77,7 +77,7 @@
                             <label for="ProductTemplateID" class="col-md-2 control-label label-start">款式名称<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-10">
                                 <p class="p-form-control">{{if and .Product .Product.ProductTemplate}}<span style="color:#337ab7;">[{{.Product.ProductTemplate.DefaultCode}}]</span> {{.Product.ProductTemplate.Name}} {{end}}</p>
-                                <select data-type="int" name="ProductTemplateID" id="ProductTemplateID" class="form-control select-product-template {{.FormField}}">
+                                <select  name="ProductTemplateID" id="ProductTemplateID" class="form-control select-product-template {{.FormField}}">
                                     {{if and .Product .Product.ProductTemplate}}
                                     <option value="{{.Product.ProductTemplate.ID}}" data-defaultcode="{{.Product.ProductTemplate.DefaultCode}}" selected="selected">{{.Product.ProductTemplate.Name}}</option>
                                     {{end}}
@@ -90,7 +90,7 @@
                             <label for="name" class="col-md-2 control-label label-start">规格名称<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-10">
                                 <p class="p-form-control">{{if .Product}} {{.Product.Name}} {{end}}</p>
-                                <input data-type="string" data-oldvalue="{{.Product.Name}}" class="form-control {{.FormField}}" id="name" name="Name" type="text" {{if .Product}} value="{{.Product.Name}}" {{end}} />
+                                <input data-oldvalue="{{.Product.Name}}" class="form-control {{.FormField}}" id="name" name="Name" type="text" {{if .Product}} value="{{.Product.Name}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -137,11 +137,11 @@
                         <div class="form-group">
                             <label for="type" class="col-md-4 control-label label-start">产品规格类型</label>
                             <div class="col-md-8">
-                                <input data-type="string" class="{{.FormField}} input-radio" {{if and .Product .Product.ProductType}} data-oldvalue="{{.Product.ProductType}}" {{else}}data-oldvalue="stock" {{end}} type="radio" id="stock-radio" value="stock" name="ProductType">
+                                <input class="{{.FormField}} input-radio" {{if and .Product .Product.ProductType}} data-oldvalue="{{.Product.ProductType}}" {{else}}data-oldvalue="stock" {{end}} type="radio" id="stock-radio" value="stock" name="ProductType">
                                 <label class="input-radio-label" for="stock-radio">库存商品</label>
-                                <input data-type="string" class="{{.FormField}} input-radio" {{if and .Product .Product.ProductType}} data-oldvalue="{{.Product.ProductType}}" {{else}}data-oldvalue="stock" {{end}} type="radio" id="consume-radio" value="consume" name="ProductType">
+                                <input class="{{.FormField}} input-radio" {{if and .Product .Product.ProductType}} data-oldvalue="{{.Product.ProductType}}" {{else}}data-oldvalue="stock" {{end}} type="radio" id="consume-radio" value="consume" name="ProductType">
                                 <label class="input-radio-label" for="consume-radio">消耗品</label>
-                                <input data-type="string" class="{{.FormField}} input-radio" {{if and .Product .Product.ProductType}} data-oldvalue="{{.Product.ProductType}}" {{else}}data-oldvalue="stock" {{end}} type="radio" id="service-radio" value="service" name="ProductType">
+                                <input class="{{.FormField}} input-radio" {{if and .Product .Product.ProductType}} data-oldvalue="{{.Product.ProductType}}" {{else}}data-oldvalue="stock" {{end}} type="radio" id="service-radio" value="service" name="ProductType">
                                 <label class="input-radio-label" for="service-radio">服务</label>
                             </div>
                         </div>
@@ -172,7 +172,7 @@
                             <label for="category" class="col-md-4 control-label label-start">款式类别<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if and .Product .Product.Category}} {{.Product.Category.Name}} {{end}}</p>
-                                <select data-type="int" {{if and .Product .Product.Category}} data-oldvalue="{{.Product.Category.ID}}" {{end}} name="Category" id="category" class="{{.FormField}} form-control select-product-category">
+                                <select  {{if and .Product .Product.Category}} data-oldvalue="{{.Product.Category.ID}}" {{end}} name="Category" id="category" class="{{.FormField}} form-control select-product-category">
                                     {{if and .Product .Product.Category}}
                                     <option value="{{.Product.Category.ID}}" selected="selected">{{.Product.Category.Name}}</option>
                                     {{end}}
@@ -189,7 +189,7 @@
                                 <label for="firstSaleUom" class="col-md-4 control-label label-start">销售单位1<span class="required-input">&nbsp*</span></label>
                                 <div class="col-md-8">
                                     <p class="p-form-control">{{if and .Product .Product.FirstSaleUom}} {{.Product.FirstSaleUom.Name}} {{end}}</p>
-                                    <select data-type="int" {{if and .Product .Product.FirstSaleUom}} data-oldvalue="{{.Product.FirstSaleUom.ID}}" {{end}} name="FirstSaleUom" id="firstSaleUom" class="{{.FormField}} form-control select-product-uom">
+                                    <select  {{if and .Product .Product.FirstSaleUom}} data-oldvalue="{{.Product.FirstSaleUom.ID}}" {{end}} name="FirstSaleUom" id="firstSaleUom" class="{{.FormField}} form-control select-product-uom">
                                         {{if and .Product .Product.FirstSaleUom}} 
                                         <option value="{{.Product.FirstSaleUom.ID}}" selected="selected">{{.Product.FirstSaleUom.Name}}</option>
                                         {{end}}
@@ -200,7 +200,7 @@
                                 <label for="secondSaleUom" class="col-md-4 control-label label-start">销售单位2<span>&nbsp</span></label>
                                 <div class="col-md-8">
                                     <p class="p-form-control">{{if and .Product .Product.SecondSaleUom}} {{.Product.SecondSaleUom.Name}} {{end}}</p>
-                                    <select data-type="int" {{if and .Product .Product.SecondSaleUom}} data-oldvalue="{{.Product.SecondSaleUom.ID}}" {{end}} name="SecondSaleUom" id="secondSaleUom" class="{{.FormField}} form-control select-product-uom">
+                                    <select  {{if and .Product .Product.SecondSaleUom}} data-oldvalue="{{.Product.SecondSaleUom.ID}}" {{end}} name="SecondSaleUom" id="secondSaleUom" class="{{.FormField}} form-control select-product-uom">
                                         {{if and .Product .Product.SecondSaleUom}}
                                             <option value="{{.Product.SecondSaleUom.ID}}" selected="selected">{{.Product.SecondSaleUom.Name}}</option>
                                         {{end}}
@@ -216,7 +216,7 @@
                                 <label for="firstPurchaseUom" class="col-md-4 control-label label-start">采购单位1<span class="required-input">&nbsp*</span></label>
                                 <div class="col-md-8">
                                     <p class="p-form-control">{{if and .Product .Product.FirstPurchaseUom}} {{.Product.FirstPurchaseUom.Name}} {{end}}</p>
-                                    <select data-type="int" {{if and .Product .Product.FirstPurchaseUom}} data-oldvalue="{{.Product.FirstPurchaseUom.ID}}" {{end}} name="FirstPurchaseUom" id="firstPurchaseUom" class="{{.FormField}} form-control select-product-uom">
+                                    <select  {{if and .Product .Product.FirstPurchaseUom}} data-oldvalue="{{.Product.FirstPurchaseUom.ID}}" {{end}} name="FirstPurchaseUom" id="firstPurchaseUom" class="{{.FormField}} form-control select-product-uom">
                                         {{if and .Product .Product.FirstPurchaseUom}} 
                                             <option value="{{.Product.FirstPurchaseUom.ID}}" selected="selected">{{.Product.FirstPurchaseUom.Name}}</option>
                                         {{end}}
@@ -227,7 +227,7 @@
                                 <label for="secondPurchaseUom" class="col-md-4 control-label label-start">采购单位2<span>&nbsp</span></label>
                                 <div class="col-md-8">
                                     <p class="p-form-control">{{if and .Product .Product.SecondPurchaseUom}} {{.Product.SecondPurchaseUom.Name}} {{end}}</p>
-                                    <select data-type="int" {{if and .Product .Product.SecondPurchaseUom}} data-oldvalue="{{.Product.SecondPurchaseUom.ID}}" {{end}} name="SecondPurchaseUom" id="secondPurchaseUom" class="{{.FormField}} form-control select-product-uom">
+                                    <select  {{if and .Product .Product.SecondPurchaseUom}} data-oldvalue="{{.Product.SecondPurchaseUom.ID}}" {{end}} name="SecondPurchaseUom" id="secondPurchaseUom" class="{{.FormField}} form-control select-product-uom">
                                         {{if and .Product .Product.SecondPurchaseUom}}
                                             <option value="{{.Product.SecondPurchaseUom.ID}}" selected="selected">{{.Product.SecondPurchaseUom.Name}}</option>
                                         {{end}}

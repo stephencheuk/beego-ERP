@@ -70,7 +70,7 @@ var BootstrapValidator = function(selector, needValidatorFields) {
                 return;
             } else {
                 toastr.success("<h3>请求成功</h3><br><a href='" + response.location + "'>1秒后跳转</a>");
-                // setTimeout(function() { window.location = response.location; }, 1000);
+                setTimeout(function() { window.location = response.location; }, 1000);
             }
         });
 
@@ -134,6 +134,19 @@ $(function() {
 
                         var params = {
                             action: "validator"
+                        }
+                        var country = $("#country");
+                        if (country.length < 1) {
+                            toastr.error("没有<strong>国家</strong>选项", "错误");
+                            return;
+                        } else {
+                            country = country.val();
+                            if (country == null || country == undefined) {
+                                toastr.error("请先选择<strong>国家</strong>", "错误");
+                                return;
+                            } else {
+                                params.CountryID = parseInt(country);
+                            }
                         }
                         var xsrf = $("input[name ='_xsrf']");
                         if (xsrf.length > 0) {
@@ -219,6 +232,65 @@ $(function() {
             }
         }
     });
+    //区县
+    BootstrapValidator("#districtForm", {
+        City: {
+            message: "该值无效",
+            validators: {
+                notEmpty: {
+                    message: "城市不能为空"
+                },
+            }
+        },
+        Name: {
+            message: "该值无效",
+            validators: {
+                notEmpty: {
+                    message: "城市不能为空"
+                },
+                remote: {
+                    url: "/address/district/",
+                    message: "区县已经存在",
+                    dataType: "json",
+                    delay: 200,
+                    type: "POST",
+                    data: function() {
+
+                        var params = {
+                            action: "validator"
+                        }
+                        var city = $("#city");
+                        if (city.length < 1) {
+                            toastr.error("没有<strong>城市</strong>选项", "错误");
+                            return;
+                        } else {
+                            city = city.val();
+                            if (city == null || city == undefined) {
+                                toastr.error("请按照<strong>国家->省份</strong>的顺序选择", "错误");
+                                return;
+                            } else {
+                                params.CityID = parseInt(city);
+                            }
+                        }
+                        var xsrf = $("input[name ='_xsrf']");
+                        if (xsrf.length > 0) {
+                            params._xsrf = xsrf[0].value;
+                        }
+                        var name = $('input[name="name"]');
+                        if (name.length > 0) {
+                            params.name = name[0].value;
+                        }
+                        var recordID = $("input[name ='recordID']");
+                        if (recordID.length > 0) {
+                            params.recordID = recordID[0].value;
+                        }
+                        return params
+                    },
+                }
+            }
+        }
+    });
+
 
 
     // 用户form

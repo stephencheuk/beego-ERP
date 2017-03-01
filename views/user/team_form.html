@@ -13,7 +13,8 @@
         <a href="{{.URL}}" class="btn btn-info fa fa-list pull-left">&nbsp列表</a>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
+    <input type="hidden" name="_method" value="PUT">
+    <input type="hidden"  class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
 
     <div class="row">
         <div class="col-md-6">
@@ -25,11 +26,13 @@
                             <label for="company" class="col-md-4 control-label label-start">所属公司<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Team .Team.Company}} {{.Team.Company.Name}}{{end}}</p>
-                                <select data-type="int" name="Company" id="company" class="{{.FormField}} form-control select-company">
+                                <select  name="Company" id="company" class="{{.FormField}} form-control select-company">
                                     {{if and .Team .Team.Company}}
                                     <option value="{{.Team.Company.ID}}" selected="selected">{{.Team.Company.Name}}</option>
                                     {{else}}
-                                    <option value="{{.LoginUser.Company.ID}}" selected="selected">{{.LoginUser.Company.Name}}</option>
+                                     {{if .LoginUser.Company}}
+                                        <option value="{{.LoginUser.Company.ID}}" selected="selected">{{.LoginUser.Company.Name}}</option>
+                                        {{end}}
                                     {{end}} 
                                 </select>
                             </div>
@@ -40,7 +43,7 @@
                             <label for="name" class="col-md-4 control-label label-start">团队名称<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Team}} {{.Team.Name}} {{end}}</p>
-                                <input data-type="string" class="{{.FormField}} form-control" name="Name" type="text" {{if .Team}} value="{{.Team.Name}}" {{end}} />
+                                <input class="{{.FormField}} form-control" name="Name" type="text" {{if .Team}} value="{{.Team.Name}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -52,7 +55,7 @@
                             <label for="leader" class="col-md-4 control-label label-start">负责人<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if .Team }} {{.Team.Leader.Name}}{{end}}</p>
-                                <select data-type="int" name="Leader" id="leader" class="{{.FormField}} form-control select-user">
+                                <select  name="Leader" id="leader" class="{{.FormField}} form-control select-user">
                              {{if  .Team }}
                             <option value="{{.Team.Leader.ID}}" selected="selected">{{.Team.Leader.Name}}</option>
                              {{end}} 
@@ -65,7 +68,7 @@
                             <label for="department" class="col-md-4 control-label label-start">所属部门</label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Team .Team.Department}} {{.Team.Department.Name}}{{end}}</p>
-                                <select data-type="int" name="Department" id="department" class="{{.FormField}} form-control select-department">
+                                <select  name="Department" id="department" class="{{.FormField}} form-control select-department">
                              {{if and .Team .Team.Department}}
                             <option value="{{.Team.Department.ID}}" selected="selected">{{.Team.Department.Name}}</option>
                              {{end}} 
@@ -85,7 +88,7 @@
                             <label for="description" class="col-md-2 control-label label-start">描述</label>
                             <div class="col-md-10">
                                 <p class="p-form-control">{{if .Team}} {{.Team.Description}} {{end}}</p>
-                                <textarea data-type="string" class="{{.FormField}}  form-control" id="description" name="Description" rows="5" placeholder="请输入街道信息">{{if .Team}}  {{.Team.Description}} {{end}}</textarea>
+                                <textarea class="{{.FormField}}  form-control" id="description" name="Description" rows="5" placeholder="请输入街道信息">{{if .Team}}  {{.Team.Description}} {{end}}</textarea>
                             </div>
                         </div>
                     </div>

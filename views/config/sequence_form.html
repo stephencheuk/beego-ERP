@@ -12,7 +12,7 @@
         <a href="{{.URL}}" class="btn btn-info fa fa-list pull-left">&nbsp列表</a>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}"> {{end}}
+    <input type="hidden"  name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}"> {{end}}
     <fieldset>
         <legend>基本信息</legend>
         <div class="row">
@@ -21,7 +21,7 @@
                     <label for="name" class="col-md-4 control-label label-start">序列名称<span class="required-input">&nbsp*</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control">{{if .Sequence}} {{.Sequence.Name}} {{end}}</p>
-                        <input data-type="string" class="form-control {{.FormField}}" name="Name" type="text" {{if not .Readonly}}autofocus{{end}}{{if .Sequence}} value="{{.Sequence.Name}}" {{end}} />
+                        <input class="form-control {{.FormField}}" name="Name" type="text" {{if not .Readonly}}autofocus{{end}}{{if .Sequence}} value="{{.Sequence.Name}}" {{end}} />
                     </div>
                 </div>
             </div>
@@ -30,7 +30,7 @@
                     <label for="code" class="col-md-4 control-label label-start">序列前缀<span class="required-input">&nbsp*</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control">{{if .Sequence}} {{.Sequence.Prefix}} {{end}}</p>
-                        <input data-type="string" class="form-control {{.FormField}} " name="Prefix" type="text" {{if .Sequence}} value="{{.Sequence.Prefix}}" {{end}} />
+                        <input class="form-control {{.FormField}} " name="Prefix" type="text" {{if .Sequence}} value="{{.Sequence.Prefix}}" {{end}} />
                     </div>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     <label for="sequence" class="col-md-4 control-label label-start">表struct名称<span class="required-input">&nbsp*</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control">{{if .Sequence}} {{.Sequence.StructName}} {{end}}</p>
-                        <input data-type="string" class="form-control {{.FormField}}" name="StructName" type="text" {{if .Sequence}} value="{{.Sequence.StructName}}" {{end}} />
+                        <input class="form-control {{.FormField}}" name="StructName" type="text" {{if .Sequence}} value="{{.Sequence.StructName}}" {{end}} />
                     </div>
                 </div>
             </div>
@@ -48,7 +48,7 @@
                     <label for="sequence" class="col-md-4 control-label label-start">序列位数<span  >&nbsp</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control">{{if .Sequence}} {{.Sequence.Padding}} {{end}}</p>
-                        <input data-type="int" class="form-control {{.FormField}}" name="Padding" type="text" {{if .Sequence}} value="{{.Sequence.Padding}}" {{else}}value="8" {{end}} />
+                        <input  class="form-control {{.FormField}}" name="Padding" type="text" {{if .Sequence}} value="{{.Sequence.Padding}}" {{else}}value="8" {{end}} />
                     </div>
                 </div>
             </div>

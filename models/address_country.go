@@ -180,11 +180,7 @@ func GetAllAddressCountry(query map[string]interface{}, exclude map[string]inter
 func UpdateAddressCountry(obj *AddressCountry, updateUser *User) (id int64, err error) {
 	o := orm.NewOrm()
 	obj.UpdateUser = updateUser
-	fmt.Printf("%+v", obj)
-	var num int64
-	if num, err = o.Update(obj, "Name", "UpdateDate", "UpdateUser"); err == nil {
-		fmt.Println("Number of records updated in database:", num)
-	}
+	_, err = o.Update(obj, "Name", "UpdateDate", "UpdateUser")
 	return obj.ID, err
 }
 

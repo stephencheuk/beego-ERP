@@ -12,26 +12,26 @@ import (
 
 //Position 职位
 type Position struct {
-	ID          int64     `orm:"column(id);pk;auto" json:"id"`         //主键
-	CreateUser  *User     `orm:"rel(fk);null" json:"-"`                //创建者
-	UpdateUser  *User     `orm:"rel(fk);null" json:"-"`                //最后更新者
-	CreateDate  time.Time `orm:"auto_now_add;type(datetime)" json:"-"` //创建时间
-	UpdateDate  time.Time `orm:"auto_now;type(datetime)" json:"-"`     //最后更新时间
-	Name        string    `orm:"unique" json:"Name"`                   //职位名称
-	Description string    `orm:"type(text)" json:"Description"`        //职位描述
+	ID          int64     `orm:"column(id);pk;auto" json:"id" form:"recordID"`     //主键
+	CreateUser  *User     `orm:"rel(fk);null" json:"-"`                            //创建者
+	UpdateUser  *User     `orm:"rel(fk);null" json:"-"`                            //最后更新者
+	CreateDate  time.Time `orm:"auto_now_add;type(datetime)" json:"-"`             //创建时间
+	UpdateDate  time.Time `orm:"auto_now;type(datetime)" json:"-"`                 //最后更新时间
+	Name        string    `orm:"unique" json:"Name" form:"Name"`                   //职位名称
+	Description string    `orm:"type(text)" json:"Description" form:"Description"` //职位描述
 
-	FormAction   string   `orm:"-" json:"FormAction"`   //非数据库字段，用于表示记录的增加，修改
-	ActionFields []string `orm:"-" json:"ActionFields"` //需要操作的字段,用于update时
 }
 
 func init() {
 	orm.RegisterModel(new(Position))
 }
+
+// TableName table name
 func (u *Position) TableName() string {
 	return "base_position"
 }
 
-// Position insert a new Position into database and returns
+// AddPosition insert a new Position into database and returns
 // last inserted ID on success.
 func AddPosition(obj *Position, addUser *User) (id int64, err error) {
 	o := orm.NewOrm()
@@ -186,9 +186,24 @@ func GetAllPosition(query map[string]interface{}, exclude map[string]interface{}
 func UpdatePosition(obj *Position, updateUser *User) (id int64, err error) {
 	o := orm.NewOrm()
 	obj.UpdateUser = updateUser
-	var num int64
-	if num, err = o.Update(obj); err == nil {
-		fmt.Println("Number of records updated in database:", num)
+	updateFields := []string{"UpdateUser", "UpdateDate", "Name", "Description"}
+	errBegin := o.Begin()
+	defer func() {
+		if err != nil {
+			if errRollback := o.Rollback(); errRollback != nil {
+				err = errRollback
+			}
+		}
+	}()
+	if errBegin != nil {
+		return 0, errBegin
+	}
+	_, err = o.Update(obj, updateFields...)
+	if err == nil {
+		errCommit := o.Commit()
+		if errCommit != nil {
+			return 0, errCommit
+		}
 	}
 	return obj.ID, err
 }

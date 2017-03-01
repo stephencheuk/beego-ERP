@@ -12,30 +12,30 @@ import (
 
 //Team 团队
 type Team struct {
-	ID          int64       `orm:"column(id);pk;auto" json:"id"`         //主键
-	CreateUser  *User       `orm:"rel(fk);null" json:"-"`                //创建者
-	UpdateUser  *User       `orm:"rel(fk);null" json:"-"`                //最后更新者
-	CreateDate  time.Time   `orm:"auto_now_add;type(datetime)" json:"-"` //创建时间
-	UpdateDate  time.Time   `orm:"auto_now;type(datetime)" json:"-"`     //最后更新时间
-	Name        string      `orm:"unique" json:"Name"`                   //组名称
-	Leader      *User       `orm:"rel(fk);null"`                         //团队负责人
-	Company     *Company    `orm:"rel(fk);null"`                         //公司
-	Department  *Department `orm:"rel(fk);null"`                         //所属
-	Members     []*User     `orm:"reverse(many)"`                        //组员
-	Active      bool        `orm:"default(true)"`                        //是否有效
-	Description string      `orm:"default()" json:"Description"`     //描述
+	ID          int64       `orm:"column(id);pk;auto" json:"id" form:"recordID"`    //主键
+	CreateUser  *User       `orm:"rel(fk);null" json:"-"`                           //创建者
+	UpdateUser  *User       `orm:"rel(fk);null" json:"-"`                           //最后更新者
+	CreateDate  time.Time   `orm:"auto_now_add;type(datetime)" json:"-"`            //创建时间
+	UpdateDate  time.Time   `orm:"auto_now;type(datetime)" json:"-"`                //最后更新时间
+	Name        string      `orm:"unique" json:"Name" form:"Name"`                  //组名称
+	Leader      *User       `orm:"rel(fk);null"`                                    //团队负责人
+	Company     *Company    `orm:"rel(fk);null"`                                    //公司
+	Department  *Department `orm:"rel(fk);null"`                                    //所属
+	Members     []*User     `orm:"reverse(many)"`                                   //组员
+	Active      bool        `orm:"default(true)"`                                   //是否有效
+	Description string      `orm:"default()" json:"Description" form:"Description"` //描述
 
-	FormAction   string   `orm:"-" json:"FormAction"`   //非数据库字段，用于表示记录的增加，修改
-	ActionFields []string `orm:"-" json:"ActionFields"` //需要操作的字段,用于update时
-	LeaderID     int64    `orm:"-" json:"Leader"`       //负责人
-	CompanyID    int64    `orm:"-" json:"Company"`      //公司
-	DepartmentID int64    `orm:"-" json:"Department"`   //部门
+	LeaderID     int64 `orm:"-" json:"Leader" form:"Leader"`         //负责人
+	CompanyID    int64 `orm:"-" json:"Company" form:"Company"`       //公司
+	DepartmentID int64 `orm:"-" json:"Department" form:"Department"` //部门
 
 }
 
 func init() {
 	orm.RegisterModel(new(Team))
 }
+
+// TableName 表名
 func (u *Team) TableName() string {
 	return "base_team"
 }
@@ -57,13 +57,16 @@ func AddTeam(obj *Team, addUser *User) (id int64, err error) {
 		}
 	}()
 	if obj.CompanyID > 0 {
-		obj.Company, _ = GetCompanyByID(obj.CompanyID)
+		obj.Company = new(Company)
+		obj.Company.ID = obj.CompanyID
 	}
 	if obj.LeaderID > 0 {
-		obj.Leader, _ = GetUserByID(obj.LeaderID)
+		obj.Leader = new(User)
+		obj.Leader.ID = obj.LeaderID
 	}
 	if obj.DepartmentID > 0 {
-		obj.Department, _ = GetDepartmentByID(obj.DepartmentID)
+		obj.Department = new(Department)
+		obj.Department.ID = obj.DepartmentID
 	}
 	if errBegin != nil {
 		return 0, errBegin
@@ -71,11 +74,10 @@ func AddTeam(obj *Team, addUser *User) (id int64, err error) {
 	id, err = o.Insert(obj)
 	if err != nil {
 		return 0, err
-	} else {
-		errCommit := o.Commit()
-		if errCommit != nil {
-			return 0, errCommit
-		}
+	}
+	errCommit := o.Commit()
+	if errCommit != nil {
+		return 0, errCommit
 	}
 	return id, err
 }
@@ -219,11 +221,22 @@ func GetAllTeam(query map[string]interface{}, exclude map[string]interface{}, co
 // the record to be updated doesn't exist
 func UpdateTeam(obj *Team, updateUser *User) (id int64, err error) {
 	o := orm.NewOrm()
-	obj.UpdateUser = updateUser
-	var num int64
-	if num, err = o.Update(obj); err == nil {
-		fmt.Println("Number of records updated in database:", num)
+	if obj.CompanyID > 0 {
+		obj.Company = new(Company)
+		obj.Company.ID = obj.CompanyID
 	}
+	if obj.LeaderID > 0 {
+		obj.Leader = new(User)
+		obj.Leader.ID = obj.LeaderID
+	}
+	if obj.DepartmentID > 0 {
+		obj.Department = new(Department)
+		obj.Department.ID = obj.DepartmentID
+	}
+	updateFields := []string{"UpdateUser", "UpdateDate", "Name", "Company", "Leader", "Department", "Description"}
+
+	obj.UpdateUser = updateUser
+	_, err = o.Update(obj, updateFields...)
 	return obj.ID, err
 }
 

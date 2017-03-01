@@ -3,17 +3,18 @@ package address
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	cb "goERP/controllers/base"
 	md "goERP/models"
 	"strconv"
 	"strings"
 )
 
+// AddressCityController address city
 type AddressCityController struct {
 	cb.BaseController
 }
 
+// Post request
 func (ctl *AddressCityController) Post() {
 	ctl.URL = "/address/city/"
 	ctl.Data["URL"] = ctl.URL
@@ -29,6 +30,8 @@ func (ctl *AddressCityController) Post() {
 		ctl.PostList()
 	}
 }
+
+// Get request
 func (ctl *AddressCityController) Get() {
 	ctl.URL = "/address/city/"
 	ctl.PageName = "城市管理"
@@ -53,19 +56,18 @@ func (ctl *AddressCityController) Get() {
 	ctl.Data["MenuAddressCityActive"] = "active"
 }
 
-// Put 修改产品款式
+// Put put request update city
 func (ctl *AddressCityController) Put() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
 	city := new(md.AddressCity)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), city); err == nil {
+	if err = ctl.ParseForm(city); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(city)).Type().Name()
-		if id, err = md.AddAddressCity(city, &ctl.User); err == nil {
+		if id, err = md.UpdateAddressCity(city, &ctl.User); err == nil {
 			result["code"] = "success"
 			result["location"] = ctl.URL + strconv.FormatInt(id, 10) + "?action=detail"
 		} else {
@@ -82,15 +84,16 @@ func (ctl *AddressCityController) Put() {
 	ctl.Data["json"] = result
 	ctl.ServeJSON()
 }
+
+// PostCreate post create city
 func (ctl *AddressCityController) PostCreate() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
 	city := new(md.AddressCity)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), city); err == nil {
+	if err = ctl.ParseForm(city); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(city)).Type().Name()
 		if id, err = md.AddAddressCity(city, &ctl.User); err == nil {
@@ -109,6 +112,8 @@ func (ctl *AddressCityController) PostCreate() {
 	ctl.Data["json"] = result
 	ctl.ServeJSON()
 }
+
+// Edit edit view
 func (ctl *AddressCityController) Edit() {
 	id := ctl.Ctx.Input.Param(":id")
 	if id != "" {
@@ -125,12 +130,16 @@ func (ctl *AddressCityController) Edit() {
 	ctl.Layout = "base/base.html"
 	ctl.TplName = "address/address_city_form.html"
 }
+
+// Detail detail view
 func (ctl *AddressCityController) Detail() {
 	ctl.Edit()
 	ctl.Data["Readonly"] = true
 	ctl.Data["FormTreeField"] = "form-tree-edit"
 	ctl.Data["Action"] = "detail"
 }
+
+// Create create view
 func (ctl *AddressCityController) Create() {
 	ctl.Data["Action"] = "create"
 	ctl.Data["Readonly"] = false
@@ -143,26 +152,34 @@ func (ctl *AddressCityController) Create() {
 
 // Validator 用于验证
 func (ctl *AddressCityController) Validator() {
-	name := strings.TrimSpace(ctl.GetString("Name"))
+	query := make(map[string]interface{})
+	exclude := make(map[string]interface{})
+	cond := make(map[string]map[string]interface{})
+	condAnd := make(map[string]interface{})
+	fields := make([]string, 0, 0)
+	sortby := make([]string, 0, 0)
+	order := make([]string, 0, 0)
+
 	recordID, _ := ctl.GetInt64("recordID")
 	result := make(map[string]bool)
-	provinceID, _ := ctl.GetInt64("ProvinceID")
-	fmt.Println(provinceID)
-	obj, err := md.GetAddressCityByName(name)
-	if err != nil {
-		result["valid"] = true
-	} else {
-		if obj.Name == name {
-			if recordID == obj.ID {
+	if provinceID, err := ctl.GetInt64("ProvinceID"); err == nil {
+		query["Province.Id"] = provinceID
+	}
+	if name := strings.TrimSpace(ctl.GetString("Name")); name != "" {
+		condAnd["Name"] = name
+	}
+	if _, arrs, err := md.GetAllAddressCity(query, exclude, cond, fields, sortby, order, 0, 2); err == nil {
+		if len(arrs) == 1 {
+			if arrs[0].ID == recordID {
 				result["valid"] = true
 			} else {
 				result["valid"] = false
 			}
-
 		} else {
 			result["valid"] = true
 		}
-
+	} else {
+		result["valid"] = true
 	}
 	ctl.Data["json"] = result
 	ctl.ServeJSON()
@@ -251,6 +268,7 @@ func (ctl *AddressCityController) PostList() {
 
 }
 
+// GetList list view
 func (ctl *AddressCityController) GetList() {
 	viewType := ctl.Input().Get("view")
 	if viewType == "" || viewType == "table" {

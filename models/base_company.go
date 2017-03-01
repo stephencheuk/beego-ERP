@@ -12,34 +12,34 @@ import (
 
 //Company 公司
 type Company struct {
-	ID         int64            `orm:"column(id);pk;auto" json:"id"`         //主键
-	CreateUser *User            `orm:"rel(fk);null" json:"-"`                //创建者
-	UpdateUser *User            `orm:"rel(fk);null" json:"-"`                //最后更新者
-	CreateDate time.Time        `orm:"auto_now_add;type(datetime)" json:"-"` //创建时间
-	UpdateDate time.Time        `orm:"auto_now;type(datetime)" json:"-"`     //最后更新时间
-	Name       string           `orm:"unique" json:"Name"`                   //公司名称
-	Code       string           `orm:"unique" json:"Code"`                   //公司编码
-	Children   []*Company       `orm:"reverse(many)" json:"-"`               //子公司
-	Parent     *Company         `orm:"rel(fk);null" json:"-"`                //上级公司
-	Department []*Department    `orm:"reverse(many)" json:"-"`               //部门
-	Country    *AddressCountry  `orm:"rel(fk);null" json:"-"`                //国家
-	Province   *AddressProvince `orm:"rel(fk);null" json:"-"`                //省份
-	City       *AddressCity     `orm:"rel(fk);null" json:"-"`                //城市
-	District   *AddressDistrict `orm:"rel(fk);null" json:"-"`                //区县
-	Street     string           `orm:"default()" json:"Street"`          //街道
+	ID         int64            `orm:"column(id);pk;auto" json:"id" form:"recordID"` //主键
+	CreateUser *User            `orm:"rel(fk);null" json:"-"`                        //创建者
+	UpdateUser *User            `orm:"rel(fk);null" json:"-"`                        //最后更新者
+	CreateDate time.Time        `orm:"auto_now_add;type(datetime)" json:"-"`         //创建时间
+	UpdateDate time.Time        `orm:"auto_now;type(datetime)" json:"-"`             //最后更新时间
+	Name       string           `orm:"unique" json:"Name" form:"Name"`               //公司名称
+	Code       string           `orm:"unique" json:"Code" form:"Code"`               //公司编码
+	Children   []*Company       `orm:"reverse(many)" json:"-"`                       //子公司
+	Parent     *Company         `orm:"rel(fk);null" json:"-" form:"-"`               //上级公司
+	Department []*Department    `orm:"reverse(many)" json:"-"`                       //部门
+	Country    *AddressCountry  `orm:"rel(fk);null" json:"-" form:"-"`               //国家
+	Province   *AddressProvince `orm:"rel(fk);null" json:"-" form:"-"`               //省份
+	City       *AddressCity     `orm:"rel(fk);null" json:"-" form:"-"`               //城市
+	District   *AddressDistrict `orm:"rel(fk);null" json:"-" form:"-"`               //区县
+	Street     string           `orm:"default()" json:"Street" form:"Street"`        //街道
 
-	FormAction   string   `orm:"-" json:"FormAction"`   //非数据库字段，用于表示记录的增加，修改
-	ActionFields []string `orm:"-" json:"ActionFields"` //需要操作的字段,用于update时
-	ParentID     int64    `orm:"-" json:"Parent"`       //母公司
-	CountryID    int64    `orm:"-" json:"Country"`      //国家
-	ProvinceID   int64    `orm:"-" json:"Province"`     //省份
-	CityID       int64    `orm:"-" json:"City"`         //城市
-	DistrictID   int64    `orm:"-" json:"District"`     //区县
+	ParentID   int64 `orm:"-" json:"Parent" form:"Parent"`     //母公司
+	CountryID  int64 `orm:"-" json:"Country" form:"Country"`   //国家
+	ProvinceID int64 `orm:"-" json:"Province" form:"Province"` //省份
+	CityID     int64 `orm:"-" json:"City" form:"City"`         //城市
+	DistrictID int64 `orm:"-" json:"District" form:"District"` //区县
 }
 
 func init() {
 	orm.RegisterModel(new(Company))
 }
+
+// TableName 表名
 func (u *Company) TableName() string {
 	return "base_company"
 }
@@ -62,19 +62,24 @@ func AddCompany(obj *Company, addUser *User) (id int64, err error) {
 		return 0, errBegin
 	}
 	if obj.ParentID > 0 {
-		obj.Parent, _ = GetCompanyByID(obj.ParentID)
+		obj.Parent = new(Company)
+		obj.Parent.ID = obj.ParentID
 	}
 	if obj.CountryID > 0 {
-		obj.Country, _ = GetAddressCountryByID(obj.CountryID)
+		obj.Country = new(AddressCountry)
+		obj.Country.ID = obj.CountryID
 	}
 	if obj.ProvinceID > 0 {
-		obj.Province, _ = GetAddressProvinceByID(obj.ProvinceID)
+		obj.Province = new(AddressProvince)
+		obj.Province.ID = obj.ProvinceID
 	}
 	if obj.CityID > 0 {
-		obj.City, _ = GetAddressCityByID(obj.CityID)
+		obj.City = new(AddressCity)
+		obj.City.ID = obj.CityID
 	}
 	if obj.DistrictID > 0 {
-		obj.District, _ = GetAddressDistrictByID(obj.DistrictID)
+		obj.District = new(AddressDistrict)
+		obj.District.ID = obj.DistrictID
 	}
 	id, err = o.Insert(obj)
 	if err == nil {
@@ -219,10 +224,28 @@ func GetAllCompany(query map[string]interface{}, exclude map[string]interface{},
 func UpdateCompany(obj *Company, updateUser *User) (id int64, err error) {
 	o := orm.NewOrm()
 	obj.UpdateUser = updateUser
-	var num int64
-	if num, err = o.Update(obj); err == nil {
-		fmt.Println("Number of records updated in database:", num)
+	updateFields := []string{"UpdateUser", "UpdateDate", "Name", "Code", "Parent", "Country", "Province", "City", "District", "Street"}
+	if obj.ParentID > 0 {
+		obj.Parent = new(Company)
+		obj.Parent.ID = obj.ParentID
 	}
+	if obj.CountryID > 0 {
+		obj.Country = new(AddressCountry)
+		obj.Country.ID = obj.CountryID
+	}
+	if obj.ProvinceID > 0 {
+		obj.Province = new(AddressProvince)
+		obj.Province.ID = obj.ProvinceID
+	}
+	if obj.CityID > 0 {
+		obj.City = new(AddressCity)
+		obj.City.ID = obj.CityID
+	}
+	if obj.DistrictID > 0 {
+		obj.District = new(AddressDistrict)
+		obj.District.ID = obj.DistrictID
+	}
+	_, err = o.Update(obj, updateFields...)
 	return obj.ID, err
 }
 

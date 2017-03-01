@@ -13,18 +13,18 @@ import (
 // AddressCity table
 // 城市
 type AddressCity struct {
-	ID         int64              `orm:"column(id);pk;auto" json:"id"`         //主键
-	CreateUser *User              `orm:"rel(fk);null" json:"-"`                //创建者
-	UpdateUser *User              `orm:"rel(fk);null" json:"-"`                //最后更新者
-	CreateDate time.Time          `orm:"auto_now_add;type(datetime)" json:"-"` //创建时间
-	UpdateDate time.Time          `orm:"auto_now;type(datetime)" json:"-"`     //最后更新时间
-	Name       string             `orm:"size(50)" json:"name"`                 //城市名称
-	Province   *AddressProvince   `orm:"rel(fk)" json:"province"`              //国家
-	Districts  []*AddressDistrict `orm:"reverse(many)" json:"districts"`       //城市
+	ID         int64              `orm:"column(id);pk;auto" json:"id" form:"recordID"` //主键
+	CreateUser *User              `orm:"rel(fk);null" json:"-"`                        //创建者
+	UpdateUser *User              `orm:"rel(fk);null" json:"-"`                        //最后更新者
+	CreateDate time.Time          `orm:"auto_now_add;type(datetime)" json:"-"`         //创建时间
+	UpdateDate time.Time          `orm:"auto_now;type(datetime)" json:"-"`             //最后更新时间
+	Name       string             `orm:"size(50)" json:"name" form:"Name"`             //城市名称
+	Province   *AddressProvince   `orm:"rel(fk)" json:"province" form:"-"`             //省份
+	Districts  []*AddressDistrict `orm:"reverse(many)" json:"districts"`               //城市
 
 	FormAction   string   `orm:"-" json:"FormAction"`   //非数据库字段，用于表示记录的增加，修改
 	ActionFields []string `orm:"-" json:"ActionFields"` //需要操作的字段,用于update时
-	ProvinceID   int64    `orm:"-" json:"Province"`
+	ProvinceID   int64    `orm:"-" json:"Province" form:"Province"`
 	DistrictIDs  []int64  `orm:"-" json:"Districts"`
 }
 
@@ -49,6 +49,10 @@ func AddAddressCity(obj *AddressCity, addUser *User) (id int64, err error) {
 	if errBegin != nil {
 		return 0, errBegin
 	}
+	if obj.ProvinceID > 0 {
+		obj.Province = new(AddressProvince)
+		obj.Province.ID = obj.ProvinceID
+	}
 	id, err = o.Insert(obj)
 	if err == nil {
 		errCommit := o.Commit()
@@ -65,6 +69,7 @@ func GetAddressCityByID(id int64) (obj *AddressCity, err error) {
 	o := orm.NewOrm()
 	obj = &AddressCity{ID: id}
 	if err = o.Read(obj); err == nil {
+		o.Read(obj.Province)
 		_, err := o.LoadRelated(obj, "Districts")
 		return obj, err
 	}
@@ -186,10 +191,11 @@ func GetAllAddressCity(query map[string]interface{}, exclude map[string]interfac
 func UpdateAddressCity(obj *AddressCity, updateUser *User) (id int64, err error) {
 	o := orm.NewOrm()
 	obj.UpdateUser = updateUser
-	var num int64
-	if num, err = o.Update(obj); err == nil {
-		fmt.Println("Number of records updated in database:", num)
+	if obj.ProvinceID > 0 {
+		obj.Province = new(AddressProvince)
+		obj.Province.ID = obj.ProvinceID
 	}
+	_, err = o.Update(obj, "Name", "Province", "UpdateDate", "UpdateUser")
 	return obj.ID, err
 }
 

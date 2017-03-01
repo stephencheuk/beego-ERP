@@ -12,23 +12,21 @@ import (
 
 //Department 部门
 type Department struct {
-	ID         int64         `orm:"column(id);pk;auto" json:"id"`         //主键
-	CreateUser *User         `orm:"rel(fk);null" json:"-"`                //创建者
-	UpdateUser *User         `orm:"rel(fk);null" json:"-"`                //最后更新者
-	CreateDate time.Time     `orm:"auto_now_add;type(datetime)" json:"-"` //创建时间
-	UpdateDate time.Time     `orm:"auto_now;type(datetime)" json:"-"`     //最后更新时间
-	Name       string        `orm:"unique"`                               //部门名称
-	Leader     *User         `orm:"rel(fk);null"`                         //部门负责人
-	Parent     *Department   `orm:"rel(fk);null"`                         //上级部门
-	Childs     []*Department `orm:"reverse(many)"`                        //下级部门
-	Members    []*User       `orm:"reverse(many)"`                        //组员
-	Company    *Company      `orm:"rel(fk);null"`                         //公司
+	ID         int64         `orm:"column(id);pk;auto" json:"id" form:"recordID"` //主键
+	CreateUser *User         `orm:"rel(fk);null" json:"-"`                        //创建者
+	UpdateUser *User         `orm:"rel(fk);null" json:"-"`                        //最后更新者
+	CreateDate time.Time     `orm:"auto_now_add;type(datetime)" json:"-"`         //创建时间
+	UpdateDate time.Time     `orm:"auto_now;type(datetime)" json:"-"`             //最后更新时间
+	Name       string        `orm:"unique" form:"Name"`                           //部门名称
+	Leader     *User         `orm:"rel(fk);null"`                                 //部门负责人
+	Parent     *Department   `orm:"rel(fk);null"`                                 //上级部门
+	Childs     []*Department `orm:"reverse(many)"`                                //下级部门
+	Members    []*User       `orm:"reverse(many)"`                                //组员
+	Company    *Company      `orm:"rel(fk);null"`                                 //公司
 
-	FormAction   string   `orm:"-" json:"FormAction"`   //非数据库字段，用于表示记录的增加，修改
-	ActionFields []string `orm:"-" json:"ActionFields"` //需要操作的字段,用于update时
-	CompanyID    int64    `orm:"-" json:"Company"`      //公司
-	LeaderID     int64    `orm:"-" json:"Leader"`       //负责人
-	ParentID     int64    `orm:"-" json:"Parent"`
+	CompanyID int64 `orm:"-" json:"Company" form:"Company"` //公司
+	LeaderID  int64 `orm:"-" json:"Leader" form:"Leader"`   //负责人
+	ParentID  int64 `orm:"-" json:"Parent" form:"Parent"`
 }
 
 func init() {
@@ -56,22 +54,24 @@ func AddDepartment(obj *Department, addUser *User) (id int64, err error) {
 		return 0, errBegin
 	}
 	if obj.CompanyID > 0 {
-		obj.Company, _ = GetCompanyByID(obj.CompanyID)
+		obj.Company = new(Company)
+		obj.Company.ID = obj.CompanyID
 	}
 	if obj.ParentID > 0 {
-		obj.Parent, _ = GetDepartmentByID(obj.ParentID)
+		obj.Parent = new(Department)
+		obj.Parent.ID = obj.ParentID
 	}
 	if obj.LeaderID > 0 {
-		obj.Leader, _ = GetUserByID(obj.LeaderID)
+		obj.Leader = new(User)
+		obj.Leader.ID = obj.LeaderID
 	}
 	id, err = o.Insert(obj)
 	if err != nil {
 		return 0, err
-	} else {
-		errCommit := o.Commit()
-		if errCommit != nil {
-			return 0, errCommit
-		}
+	}
+	errCommit := o.Commit()
+	if errCommit != nil {
+		return 0, errCommit
 	}
 	return id, err
 }
@@ -213,10 +213,21 @@ func GetAllDepartment(query map[string]interface{}, exclude map[string]interface
 func UpdateDepartment(obj *Department, updateUser *User) (id int64, err error) {
 	o := orm.NewOrm()
 	obj.UpdateUser = updateUser
-	var num int64
-	if num, err = o.Update(obj); err == nil {
-		fmt.Println("Number of records updated in database:", num)
+	updateFields := []string{"UpdateUser", "UpdateDate", "Name", "Company", "Leader", "Parent"}
+
+	if obj.CompanyID > 0 {
+		obj.Company = new(Company)
+		obj.Company.ID = obj.CompanyID
 	}
+	if obj.ParentID > 0 {
+		obj.Parent = new(Department)
+		obj.Parent.ID = obj.ParentID
+	}
+	if obj.LeaderID > 0 {
+		obj.Leader = new(User)
+		obj.Leader.ID = obj.LeaderID
+	}
+	_, err = o.Update(obj, updateFields...)
 	return obj.ID, err
 }
 

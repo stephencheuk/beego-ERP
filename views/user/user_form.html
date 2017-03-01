@@ -12,7 +12,7 @@
         <a href="{{.URL}}" class="btn btn-info fa fa-list pull-left">&nbsp列表</a>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}"> {{end}}
+    <input type="hidden" name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}"> {{end}}
     <fieldset>
         <legend>基本信息</legend>
         <div class="row">
@@ -21,7 +21,7 @@
                     <label for="name" class="col-md-4 control-label label-start">用户名<span class="required-input">&nbsp*</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control"> {{.User.Name}} </p>
-                        <input data-type="string" class="form-control {{.FormField}}" id="name" name="Name" {{if not .Readonly}}autofocus{{end}} type="text" data-oldValue="{{.User.Name}}" value="{{.User.Name}}" />
+                        <input class="form-control {{.FormField}}" id="name" name="Name" {{if not .Readonly}}autofocus{{end}} type="text" data-oldValue="{{.User.Name}}" value="{{.User.Name}}" />
                     </div>
                 </div>
             </div>
@@ -30,7 +30,7 @@
                     <label for="namezh" class="col-md-4 control-label">用户名(中文)<span class="required-input">&nbsp*</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control"> {{.User.NameZh}} </p>
-                        <input data-type="string" class="form-control {{.FormField}}" id="namezh" name="NameZh" type="text" data-oldValue="{{.User.NameZh}}" value="{{.User.NameZh}}" />
+                        <input class="form-control {{.FormField}}" id="namezh" name="NameZh" type="text" data-oldValue="{{.User.NameZh}}" value="{{.User.NameZh}}" />
                     </div>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     <label for="mobile" class="col-md-4 control-label label-start">手机号码<span class="required-input">&nbsp*</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control"> {{.User.Mobile}} </p>
-                        <input data-type="string" class="form-control {{.FormField}}" name="Mobile" id="mobile" type="text" data-oldValue="{{.User.Mobile}}" value="{{.User.Mobile}}" />
+                        <input class="form-control {{.FormField}}" name="Mobile" id="mobile" type="text" data-oldValue="{{.User.Mobile}}" value="{{.User.Mobile}}" />
                         </select>
                     </div>
                 </div>
@@ -49,7 +49,7 @@
                     <label for="tel" class="col-md-4 control-label">座机</label>
                     <div class="col-md-8">
                         <p class="p-form-control"> {{.User.Tel}} </p>
-                        <input data-type="string" class="form-control {{.FormField}}" name="Tel" id="tel" type="text" data-oldValue="{{.User.Tel}}" value="{{.User.Tel}}" />
+                        <input class="form-control {{.FormField}}" name="Tel" id="tel" type="text" data-oldValue="{{.User.Tel}}" value="{{.User.Tel}}" />
                     </div>
                 </div>
             </div>
@@ -60,7 +60,7 @@
                     <label for="email" class="col-md-4 control-label label-start">邮箱<span class="required-input">&nbsp*</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control"> {{.User.Email}} </p>
-                        <input data-type="string" class="form-control {{.FormField}}" name="Email" id="email" type="email" data-oldValue="{{.User.Email}}" value="{{.User.Email}}" />
+                        <input class="form-control {{.FormField}}" name="Email" id="email" type="email" data-oldValue="{{.User.Email}}" value="{{.User.Email}}" />
                     </div>
                 </div>
             </div>
@@ -69,7 +69,7 @@
                     <label for="qq" class="col-md-4 control-label ">QQ</label>
                     <div class="col-md-8">
                         <p class="p-form-control"> {{.User.Qq}} </p>
-                        <input data-type="string" class="form-control {{.FormField}}" name="Qq" id="qq" type="text" data-oldValue="{{.User.Qq}}" value="{{.User.Qq}}" />
+                        <input class="form-control {{.FormField}}" name="Qq" id="qq" type="text" data-oldValue="{{.User.Qq}}" value="{{.User.Qq}}" />
                     </div>
                 </div>
             </div>
@@ -78,7 +78,7 @@
                     <label for="Wechat" class="col-md-4 control-label">微信</label>
                     <div class="col-md-8">
                         <p class="p-form-control"> {{.User.WeChat}} </p>
-                        <input data-type="string" class="form-control {{.FormField}}" name="WeChat" id="wechat" data-oldValue="{{.User.WeChat}}" type="text" value="{{.User.WeChat}}" />
+                        <input class="form-control {{.FormField}}" name="WeChat" id="wechat" data-oldValue="{{.User.WeChat}}" type="text" value="{{.User.WeChat}}" />
                     </div>
                 </div>
             </div>
@@ -116,11 +116,13 @@
                     <label for="company" class="col-md-4 control-label label-start">所属公司<span class="required-input">&nbsp*</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control"> {{if and .User .User.Company}} {{.User.Company.Name}} {{end}}</p>
-                        <select data-type="int" aria-hidden="true" name="Company" id="company" class="form-control select-company {{.FormField}}" {{if and .User .User.Company}} data-oldValue="{{.User.Company.ID}}" {{end}}>
+                        <select aria-hidden="true" name="Company" id="company" class="form-control select-company {{.FormField}}" {{if and .User .User.Company}} data-oldValue="{{.User.Company.ID}}" {{end}}>
                            {{if and .User .User.Company}}
                             <option value="{{.User.Company.ID}}" selected="selected"> {{.User.Company.Name}}</option>
                             {{else}}
-                            <option value="{{.LoginUser.Company.ID}}" selected="selected">{{.LoginUser.Company.Name}}</option>
+                              {{if .LoginUser.Company}}
+                                <option value="{{.LoginUser.Company.ID}}" selected="selected">{{.LoginUser.Company.Name}}</option>
+                              {{end}}
                             {{end}}
                         </select>
                     </div>
@@ -131,7 +133,7 @@
                     <label for="department" class="col-md-4 control-label label-start">部门<span class="required-input">&nbsp*</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control"> {{if and .User .User.Department}} {{.User.Department.Name}} {{end}}</p>
-                        <select data-type="int" aria-hidden="true" name="Department" id="department" class="form-control select-department {{.FormField}}" {{if and .User .User.Department}} data-oldValue="{{.User.Department.ID}}" {{end}}>
+                        <select aria-hidden="true" name="Department" id="department" class="form-control select-department {{.FormField}}" {{if and .User .User.Department}} data-oldValue="{{.User.Department.ID}}" {{end}}>
                            {{if and .User .User.Department}}
                             <option value="{{.User.Department.ID}}" selected="selected"> {{.User.Department.Name}}</option>
                             {{end}}
@@ -144,7 +146,7 @@
                     <label for="position" class="col-md-4 control-label label-start">职位<span class="required-input">&nbsp*</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control"> {{if and .User .User.Position}} {{.User.Position.Name}} {{end}}</p>
-                        <select data-type="int" name="Position" id="position" class="form-control select-position {{.FormField}}" {{if and .User .User.Position}} data-oldValue="{{.User.Position.ID}}" {{end}}>
+                        <select name="Position" id="position" class="form-control select-position {{.FormField}}" {{if and .User .User.Position}} data-oldValue="{{.User.Position.ID}}" {{end}}>
                             {{if and .User .User.Position}}
                             <option value="{{.User.Position.ID}}" selected="selected">{{.User.Position.Name}}</option>
                             {{end}}
@@ -185,21 +187,6 @@
                     <label for="active" class="col-md-4 control-label ">有效</label>
                     <div class="col-md-8 ">
                         <input data-type="bool" name="Active" id="active" class="form-control form-checkbox {{.FormField}}" {{if and .User .User.Active}} {{if eq .User.Active true }}data-oldValue="{{.User.Active}}" {{end}}{{else}} checked="checked" {{end}} type="checkbox">
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="roleIds" class="col-md-2 control-label label-start">角色 </label>
-                    <div class="col-md-10">
-                        <p class="p-form-control">{{if and .User .User.Roles}} {{range $j,$attrVal := .User.Roles}}<a class='display-block label label-primary'>{{$attrVal.Name}}</a> {{end}}{{end}}</p>
-                        <select data-type='array_int' data-name='RoleIds' name='RoleIds' id='roleIds' data-oldValue="{{if and .User .User.Roles}}{{range $j,$attrVal :=.User.Roles}}{{$attrVal.ID}},{{end}}{{end}}" multiple='multiple' class='{{.FormField}} form-control select-role'>
-                            {{if and .User  .User.Roles}} 
-                                {{range $j,$attrVal :=  .User.Roles}}
-                                    <option value="{{$attrVal.ID}}" selected="selected">{{$attrVal.Name}}</option>
-                                {{end}}
-                            {{end}}
-                        </select>
                     </div>
                 </div>
             </div>

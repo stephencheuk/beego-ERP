@@ -13,7 +13,8 @@
         <a href="{{.URL}}" class="btn btn-info fa fa-list pull-left">&nbsp列表</a>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
+    <input type="hidden" name="_method" value="PUT">
+    <input type="hidden"  class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
 
     <div class="row">
         <div class="col-md-6">
@@ -25,11 +26,13 @@
                             <label for="company" class="col-md-4 control-label label-start">所属公司<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Department .Department.Company}} {{.Department.Company.Name}}{{end}}</p>
-                                <select data-type="int" name="Company" id="company" class="{{.FormField}} form-control select-company">
+                                <select  name="Company" id="company" class="{{.FormField}} form-control select-company">
                                     {{if and .Department .Department.Company}}
                                         <option value="{{.Department.Company.ID}}" selected="selected">{{.Department.Company.Name}}</option>
                                     {{else}}
+                                        {{if .LoginUser.Company}}
                                         <option value="{{.LoginUser.Company.ID}}" selected="selected">{{.LoginUser.Company.Name}}</option>
+                                        {{end}}
                                     {{end}} 
                                 </select>
                             </div>
@@ -40,7 +43,7 @@
                             <label for="name" class="col-md-4 control-label label-start">部门名称<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Department}} {{.Department.Name}} {{end}}</p>
-                                <input data-type="string" class="{{.FormField}} form-control" name="Name" type="text" {{if .Department}} value="{{.Department.Name}}" {{end}} />
+                                <input class="{{.FormField}} form-control" name="Name" type="text" {{if .Department}} value="{{.Department.Name}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -52,7 +55,7 @@
                             <label for="leader" class="col-md-4 control-label label-start">负责人</label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Department .Department.Leader}} {{.Department.Leader.Name}}{{end}}</p>
-                                <select data-type="int" name="Leader" id="leader" class="{{.FormField}} form-control select-user">
+                                <select  name="Leader" id="leader" class="{{.FormField}} form-control select-user">
                              {{if and .Department .Department.Leader}}
                             <option value="{{.Department.Leader.ID}}" selected="selected">{{.Department.Leader.Name}}</option>
                              {{end}} 
@@ -65,7 +68,7 @@
                             <label for="parent" class="col-md-4 control-label label-start">上级部门</label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Department .Department.Parent}} {{.Department.Parent.Name}}{{end}}</p>
-                                <select data-type="int" name="Parent" id="parent" class="{{.FormField}} form-control select-department">
+                                <select  name="Parent" id="parent" class="{{.FormField}} form-control select-department">
                                     {{if and .Department .Department.Parent}}
                                     <option value="{{.Department.Parent.ID}}" selected="selected">{{.Department.Parent.Name}}</option>
                                     {{end}} 

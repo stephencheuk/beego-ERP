@@ -13,6 +13,7 @@ type CompanyController struct {
 	BaseController
 }
 
+// Post request
 func (ctl *CompanyController) Post() {
 	ctl.URL = "/company/"
 	ctl.Data["URL"] = ctl.URL
@@ -28,6 +29,8 @@ func (ctl *CompanyController) Post() {
 		ctl.PostList()
 	}
 }
+
+// Get request
 func (ctl *CompanyController) Get() {
 	ctl.URL = "/company/"
 	ctl.PageName = "公司管理"
@@ -52,16 +55,16 @@ func (ctl *CompanyController) Get() {
 	ctl.Data["MenuCompanyActive"] = "active"
 }
 
-// Put 修改产品款式
+// Put update company info
 func (ctl *CompanyController) Put() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
 	company := new(md.Company)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), company); err == nil {
+	if err = ctl.ParseForm(company); err == nil {
+
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(company)).Type().Name()
 		if id, err = md.UpdateCompany(company, &ctl.User); err == nil {
@@ -80,15 +83,17 @@ func (ctl *CompanyController) Put() {
 	ctl.Data["json"] = result
 	ctl.ServeJSON()
 }
+
+// PostCreate create company
 func (ctl *CompanyController) PostCreate() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
 	company := new(md.Company)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), company); err == nil {
+	if err = ctl.ParseForm(company); err == nil {
+
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(company)).Type().Name()
 
@@ -108,6 +113,8 @@ func (ctl *CompanyController) PostCreate() {
 	ctl.Data["json"] = result
 	ctl.ServeJSON()
 }
+
+// Edit edit company
 func (ctl *CompanyController) Edit() {
 	id := ctl.Ctx.Input.Param(":id")
 	if id != "" {
@@ -124,12 +131,16 @@ func (ctl *CompanyController) Edit() {
 	ctl.Layout = "base/base.html"
 	ctl.TplName = "user/company_form.html"
 }
+
+// Detail detail company
 func (ctl *CompanyController) Detail() {
 	ctl.Edit()
 	ctl.Data["Readonly"] = true
 	ctl.Data["FormTreeField"] = "form-tree-edit"
 	ctl.Data["Action"] = "detail"
 }
+
+// Create create company view
 func (ctl *CompanyController) Create() {
 	ctl.Data["Action"] = "create"
 	ctl.Data["Readonly"] = false
@@ -140,6 +151,7 @@ func (ctl *CompanyController) Create() {
 	ctl.TplName = "user/company_form.html"
 }
 
+// Validator Validator
 func (ctl *CompanyController) Validator() {
 	name := strings.TrimSpace(ctl.GetString("Name"))
 	recordID, _ := ctl.GetInt64("recordID")
@@ -209,6 +221,8 @@ func (ctl *CompanyController) addressTemplateList(query map[string]interface{}, 
 	}
 	return result, err
 }
+
+// PostList post request get company list
 func (ctl *CompanyController) PostList() {
 	query := make(map[string]interface{})
 	exclude := make(map[string]interface{})
@@ -261,6 +275,7 @@ func (ctl *CompanyController) PostList() {
 
 }
 
+// GetList list view
 func (ctl *CompanyController) GetList() {
 	viewType := ctl.Input().Get("view")
 	if viewType == "" || viewType == "table" {

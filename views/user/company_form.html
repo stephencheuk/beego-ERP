@@ -13,7 +13,8 @@
         <a href="{{.URL}}" class="btn btn-info fa fa-list pull-left">&nbsp列表</a>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
+    <input type="hidden" name="_method" value="PUT">
+    <input type="hidden"  class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
 
     <div class="row">
         <div class="col-md-6">
@@ -25,7 +26,7 @@
                             <label for="name" class="col-md-4 control-label label-start">公司名称<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Company}} {{.Company.Name}} {{end}}</p>
-                                <input data-type="string" class="{{.FormField}} form-control" name="Name" type="text" {{if .Company}} value="{{.Company.Name}}" {{end}} />
+                                <input class="{{.FormField}} form-control" name="Name" type="text" {{if .Company}} value="{{.Company.Name}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -34,7 +35,7 @@
                             <label for="code" class="col-md-4 control-label label-start">公司编码</label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Company}} {{.Company.Code}} {{end}}</p>
-                                <input data-type="string" class="{{.FormField}} form-control" name="Code" type="text" {{if .Company}} value="{{.Company.Code}}" {{end}} />
+                                <input class="{{.FormField}} form-control" name="Code" type="text" {{if .Company}} value="{{.Company.Code}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -45,7 +46,7 @@
                             <label for="parent" class="col-md-4 control-label label-start">母公司</label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Company .Company.Parent}} {{.Company.Parent.Name}}{{end}}</p>
-                                <select data-type="int" name="Parent" id="parent" class="{{.FormField}} form-control select-company">
+                                <select  name="Parent" id="parent" class="{{.FormField}} form-control select-company">
                              {{if and .Company .Company.Parent}}
                             <option value="{{.Company.Parent.ID}}" selected="selected">{{.Company.Parent.Name}}</option>
                              {{end}} 
@@ -65,7 +66,7 @@
                             <label for="country" class="col-md-4 control-label label-start">国家<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Company .Company.Country}} {{.Company.Country.Name}}{{end}}</p>
-                                <select data-type="int" name="Country" id="country" class="{{.FormField}} form-control select-address-country">
+                                <select  name="Country" id="country" class="{{.FormField}} form-control select-address-country">
                              {{if and .Company .Company.Country}}
                             <option value="{{.Company.Country.ID}}" selected="selected">{{.Company.Country.Name}}</option>
                             {{else}}<option value="1" selected="selected">中国</option>{{end}} 
@@ -78,7 +79,7 @@
                             <label for="province" class="col-md-4 control-label label-start">省份<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Company .Company.Province}} {{.Company.Province.Name}}{{end}}</p>
-                                <select data-type="int" name="Province" id="province" class="{{.FormField}} form-control select-address-province">
+                                <select  name="Province" id="province" class="{{.FormField}} form-control select-address-province">
                              {{if and .Company .Company.Province}}
                             <option value="{{.Company.Province.ID}}" selected="selected">{{.Company.Province.Name}}</option>
                              {{end}} 
@@ -93,7 +94,7 @@
                             <label for="city" class="col-md-4 control-label label-start">城市<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Company .Company.City}} {{.Company.City.Name}}{{end}}</p>
-                                <select data-type="int" name="City" id="city" class="{{.FormField}} form-control select-address-city">
+                                <select  name="City" id="city" class="{{.FormField}} form-control select-address-city">
                              {{if and .Company .Company.City}}
                             <option value="{{.Company.City.ID}}" selected="selected">{{.Company.City.Name}}</option>
                              {{end}} 
@@ -106,7 +107,7 @@
                             <label for="district" class="col-md-4 control-label label-start">区县</label>
                             <div class="col-md-8">
                                 <p class="p-form-control"> {{if and .Company .Company.District}} {{.Company.District.Name}}{{end}}</p>
-                                <select data-type="int" name="District" id="district" class="{{.FormField}} form-control select-address-district">
+                                <select  name="District" id="district" class="{{.FormField}} form-control select-address-district">
                              {{if and .Company .Company.District}}
                             <option value="{{.Company.District.ID}}" selected="selected">{{.Company.District.Name}}</option>
                              {{end}} 
@@ -121,7 +122,7 @@
                             <label for="Street" class="col-md-2 control-label label-start">街道<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-10">
                                 <p class="p-form-control">{{if .Company}} {{.Company.Street}} {{end}}</p>
-                                <textarea data-type="string" class="{{.FormField}}  form-control" name="Street" rows="2" placeholder="请输入街道信息">{{if .Company}}  {{.Company.Street}} {{end}}</textarea>
+                                <textarea class="{{.FormField}}  form-control" name="Street" rows="2" placeholder="请输入街道信息">{{if .Company}}  {{.Company.Street}} {{end}}</textarea>
                             </div>
                         </div>
                     </div>

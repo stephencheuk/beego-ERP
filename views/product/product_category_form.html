@@ -12,7 +12,7 @@
         <a href="{{.URL}}" class="btn btn-info fa fa-list pull-left">&nbsp列表</a>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}"> {{end}}
+    <input type="hidden"  name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}"> {{end}}
     <fieldset>
         <legend>基本信息</legend>
         <div class="row">
@@ -21,7 +21,7 @@
                     <label for="name" class="col-md-4 control-label label-start">产品类别<span class="required-input">&nbsp*</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control">{{if .Category}} {{.Category.Name}} {{end}}</p>
-                        <input class="form-control {{.FormField}}" data-type="string" data-oldvalue="{{.Category.Name}}" name="Name" type="text" {{if not .Readonly}}autofocus{{end}} {{if .Category}} value="{{.Category.Name}}" {{end}} />
+                        <input class="form-control {{.FormField}}" data-oldvalue="{{.Category.Name}}" name="Name" type="text" {{if not .Readonly}}autofocus{{end}} {{if .Category}} value="{{.Category.Name}}" {{end}} />
                     </div>
                 </div>
             </div>
@@ -30,7 +30,7 @@
                     <label for="parent" class="col-md-4 control-label label-start">上级类别</label>
                     <div class="col-md-8">
                         <p class="p-form-control">{{if and .Category .Category.Parent}} {{.Category.Parent.Name}}{{else}} - {{end}}</p>
-                        <select name="Parent" data-type="int" id="parent" data-oldvalue="{{.Category.Parent.ID}}" class="form-control select-product-category {{.FormField}}">
+                        <select name="Parent"  id="parent" data-oldvalue="{{.Category.Parent.ID}}" class="form-control select-product-category {{.FormField}}">
                             {{if and .Category .Category.Parent}} 
                             <option value="{{.Category.Parent.ID}}}" selected="selected">{{.Category.Parent.Name}}</option>
                             {{end}} 

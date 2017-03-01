@@ -3,6 +3,7 @@ package address
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"goERP/controllers/base"
 	md "goERP/models"
 	"strconv"
@@ -63,6 +64,7 @@ func (ctl *AddressProvinceController) Put() {
 	)
 	if err = ctl.ParseForm(province); err == nil {
 		// 获得struct表名
+		fmt.Printf("%+v\n", province)
 		// structName := reflect.Indirect(reflect.ValueOf(province)).Type().Name()
 		if id, err = md.UpdateAddressProvince(province, &ctl.User); err == nil {
 			result["code"] = "success"
@@ -72,6 +74,8 @@ func (ctl *AddressProvinceController) Put() {
 			result["message"] = "数据创建失败"
 			result["debug"] = err.Error()
 		}
+	} else {
+		fmt.Println(err)
 	}
 	if err != nil {
 		result["code"] = "failed"
@@ -88,6 +92,7 @@ func (ctl *AddressProvinceController) PostCreate() {
 		err error
 		id  int64
 	)
+
 	if err = ctl.ParseForm(province); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(province)).Type().Name()
@@ -140,24 +145,37 @@ func (ctl *AddressProvinceController) Create() {
 }
 
 func (ctl *AddressProvinceController) Validator() {
-	name := strings.TrimSpace(ctl.GetString("Name"))
+	query := make(map[string]interface{})
+	exclude := make(map[string]interface{})
+	cond := make(map[string]map[string]interface{})
+	condAnd := make(map[string]interface{})
+	fields := make([]string, 0, 0)
+	sortby := make([]string, 0, 0)
+	order := make([]string, 0, 0)
+
 	recordID, _ := ctl.GetInt64("recordID")
 	result := make(map[string]bool)
-	obj, err := md.GetAddressProvinceByName(name)
-	if err != nil {
-		result["valid"] = true
-	} else {
-		if obj.Name == name {
-			if recordID == obj.ID {
+	if countryID, err := ctl.GetInt64("CountryID"); err == nil {
+		condAnd["Country.Id"] = countryID
+	}
+	if name := strings.TrimSpace(ctl.GetString("Name")); name != "" {
+		condAnd["Name"] = name
+	}
+	if len(condAnd) > 0 {
+		cond["and"] = condAnd
+	}
+	if _, arrs, err := md.GetAllAddressProvince(query, exclude, cond, fields, sortby, order, 0, 2); err == nil {
+		if len(arrs) == 1 {
+			if arrs[0].ID == recordID {
 				result["valid"] = true
 			} else {
 				result["valid"] = false
 			}
-
 		} else {
 			result["valid"] = true
 		}
-
+	} else {
+		result["valid"] = true
 	}
 	ctl.Data["json"] = result
 	ctl.ServeJSON()

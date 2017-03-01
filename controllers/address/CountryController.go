@@ -10,10 +10,12 @@ import (
 	"strings"
 )
 
+// AddressCountryController address country
 type AddressCountryController struct {
 	cb.BaseController
 }
 
+// Post post request
 func (ctl *AddressCountryController) Post() {
 	ctl.URL = "/address/country/"
 	ctl.Data["URL"] = ctl.URL
@@ -29,6 +31,8 @@ func (ctl *AddressCountryController) Post() {
 		ctl.PostList()
 	}
 }
+
+// Get get request
 func (ctl *AddressCountryController) Get() {
 	ctl.URL = "/address/country/"
 	ctl.PageName = "国家管理"
@@ -79,6 +83,8 @@ func (ctl *AddressCountryController) Put() {
 	ctl.Data["json"] = result
 	ctl.ServeJSON()
 }
+
+// PostCreate post request create country
 func (ctl *AddressCountryController) PostCreate() {
 	result := make(map[string]interface{})
 	var (
@@ -86,6 +92,7 @@ func (ctl *AddressCountryController) PostCreate() {
 		id  int64
 	)
 	country := new(md.AddressCountry)
+
 	if err = ctl.ParseForm(country); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(country)).Type().Name()
@@ -105,6 +112,8 @@ func (ctl *AddressCountryController) PostCreate() {
 	ctl.Data["json"] = result
 	ctl.ServeJSON()
 }
+
+// Edit edit view
 func (ctl *AddressCountryController) Edit() {
 	id := ctl.Ctx.Input.Param(":id")
 	if id != "" {
@@ -121,12 +130,16 @@ func (ctl *AddressCountryController) Edit() {
 	ctl.Layout = "base/base.html"
 	ctl.TplName = "address/address_country_form.html"
 }
+
+// Detail detail view
 func (ctl *AddressCountryController) Detail() {
 	ctl.Edit()
 	ctl.Data["Readonly"] = true
 	ctl.Data["FormTreeField"] = "form-tree-edit"
 	ctl.Data["Action"] = "detail"
 }
+
+// Create create view
 func (ctl *AddressCountryController) Create() {
 	ctl.Data["Action"] = "create"
 	ctl.Data["Readonly"] = false
@@ -137,6 +150,7 @@ func (ctl *AddressCountryController) Create() {
 	ctl.TplName = "address/address_country_form.html"
 }
 
+// Validator Validator
 func (ctl *AddressCountryController) Validator() {
 	name := strings.TrimSpace(ctl.GetString("Name"))
 	recordID, _ := ctl.GetInt64("recordID")
@@ -186,6 +200,8 @@ func (ctl *AddressCountryController) addressTemplateList(query map[string]interf
 	}
 	return result, err
 }
+
+// PostList post request get country list
 func (ctl *AddressCountryController) PostList() {
 	query := make(map[string]interface{})
 	exclude := make(map[string]interface{})
@@ -238,6 +254,7 @@ func (ctl *AddressCountryController) PostList() {
 
 }
 
+// GetList list view
 func (ctl *AddressCountryController) GetList() {
 	viewType := ctl.Input().Get("view")
 	if viewType == "" || viewType == "table" {

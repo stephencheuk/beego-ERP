@@ -13,7 +13,7 @@ displayTable("#form-table-sale-order-line", "/sale/order/line", [
             var html = '';
             if (row.Product) {
                 html = "<p class='p-form-line-control'>" + "[" + row.Product.defaultCode + "]" + row.Product.name + "<a class='pull-right' target='_blank' href='/product/product/" + row.Product.id + "?action=detail'><i class='fa fa-external-link'></i></a></p>";
-                html += '<select data-type="int" data-oldvalue="' + row.Product.id + '" name="ProductProduct-' + row.id + '" id="ProductProduct-' + row.id + '" class="form-control select-sale-order-product-product">';
+                html += '<select  data-oldvalue="' + row.Product.id + '" name="ProductProduct-' + row.id + '" id="ProductProduct-' + row.id + '" class="form-control select-sale-order-product-product">';
                 html += '<option value="' + row.Product.id + '"  selected="selected">' + '[' + row.Product.defaultCode + ']' + row.Product.name + '</option>'
                 html += '</select>';
             }

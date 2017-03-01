@@ -13,7 +13,7 @@
     </div>
     {{ .xsrf }} {{if .RecordID}}
     <input type="hidden" name="_method" value="PUT">
-    <input type="hidden" data-type="int" name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}"> {{end}}
+    <input type="hidden"  name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}"> {{end}}
     <div class="col-md-6">
         <fieldset>
             <legend>基本信息</legend>
@@ -23,7 +23,7 @@
                         <label for="country" class="col-md-4 control-label label-start">国家<span class="required-input">&nbsp*</span></label>
                         <div class="col-md-8">
                             <p class="p-form-control"> {{if and .Province .Province.Country}} {{.Province.Country.Name}}{{end}}</p>
-                            <select data-type="int" name="Country" id="country" class="{{.FormField}} form-control select-address-country">
+                            <select  name="Country" id="country" class="{{.FormField}} form-control select-address-country">
                              {{if and .Province .Province.Country}}
                             <option value="{{.Province.Country.ID}}" selected="selected">{{.Province.Country.Name}}</option>
                             {{else}}<option value="1" selected="selected">中国</option>{{end}} 
@@ -36,7 +36,7 @@
                         <label for="name" class="col-md-4 control-label label-start">省份名称<span class="required-input">&nbsp*</span></label>
                         <div class="col-md-8">
                             <p class="p-form-control">{{if .Province}} {{.Province.Name}} {{end}}</p>
-                            <input data-type="string" class="{{.FormField}} form-control" name="Name" type="text" {{if .Province}} value="{{.Province.Name}}" {{end}} />
+                            <input class="{{.FormField}} form-control" name="Name" type="text" {{if .Province}} value="{{.Province.Name}}" {{end}} />
                         </div>
                     </div>
                 </div>

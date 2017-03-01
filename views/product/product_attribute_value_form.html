@@ -12,7 +12,7 @@
         <a href="{{.URL}}" class="btn btn-info fa fa-list pull-left">&nbsp列表</a>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}"> {{end}}
+    <input type="hidden"  name="recordID" id="record-id" class="{{.FormField}}" value="{{.RecordID}}"> {{end}}
     <fieldset>
         <legend>基本信息</legend>
         <div class="row">
@@ -22,7 +22,7 @@
                     <div class="col-md-8">
                         <p class="p-form-control">{{if .ProductAttValue}} {{.ProductAttValue.Attribute.Name}} {{end}}</p>
 
-                        <select data-type="int" name="AttributeID" id="productAttributeID" autofocus class="{{.FormField}} form-control select-product-attribute">
+                        <select  name="AttributeID" id="productAttributeID" autofocus class="{{.FormField}} form-control select-product-attribute">
                             {{if .ProductAttValue}}
                             <option value="{{.ProductAttValue.Attribute.ID}}" selected="selected">{{.ProductAttValue.Attribute.Name}}</option> 
                             {{end}}
@@ -35,7 +35,7 @@
                     <label for="name" class="col-md-4 control-label label-start">属性值<span class="required-input">&nbsp*</span></label>
                     <div class="col-md-8">
                         <p class="p-form-control">{{if .ProductAttValue}} {{.ProductAttValue.Name}} {{end}}</p>
-                        <input data-type="string" class="form-control {{.FormField}}" name="Name" type="text" {{if .ProductAttValue}} value="{{.ProductAttValue.Name}}" {{end}} />
+                        <input class="form-control {{.FormField}}" name="Name" type="text" {{if .ProductAttValue}} value="{{.ProductAttValue.Name}}" {{end}} />
                     </div>
                 </div>
             </div>

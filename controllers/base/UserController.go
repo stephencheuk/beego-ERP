@@ -24,7 +24,8 @@ func (ctl *UserController) Put() {
 	var (
 		err error
 	)
-	if err = json.Unmarshal([]byte(postData), user); err == nil {
+	if err = ctl.ParseForm(user); err == nil {
+
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(template)).Type().Name()
 		if err = md.UpdateUser(user, &ctl.User); err == nil {
@@ -275,14 +276,12 @@ func (ctl *UserController) ChangePwd() {
 //PostCreate create user with post params
 func (ctl *UserController) PostCreate() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
-	fmt.Printf("%+v\n", postData)
 	user := new(md.User)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), user); err == nil {
+	if err = ctl.ParseForm(user); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(template)).Type().Name()
 		if id, err = md.AddUser(user, &ctl.User); err == nil {

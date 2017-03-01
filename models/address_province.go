@@ -17,10 +17,10 @@ type AddressProvince struct {
 	UpdateUser *User           `orm:"rel(fk);null" json:"-"`                        //最后更新者
 	CreateDate time.Time       `orm:"auto_now_add;type(datetime)" json:"-"`         //创建时间
 	UpdateDate time.Time       `orm:"auto_now;type(datetime)" json:"-"`             //最后更新时间
-	Name       string          `xml:"ProvinceName,attr" form:"Name"`                //省份名称
-	Country    *AddressCountry `orm:"rel(fk)" form:"Country.id"`                    //国家
+	Name       string          `xml:"ProvinceName,attr" json:"Name" form:"Name"`    //省份名称
+	Country    *AddressCountry `orm:"rel(fk)" form:"-"`                             //国家
 	Citys      []*AddressCity  `orm:"reverse(many)"`                                //城市
-
+	CountryID  int64           `orm:"-" form:"Country"`
 }
 
 func init() {
@@ -43,6 +43,10 @@ func AddAddressProvince(obj *AddressProvince, addUser *User) (id int64, err erro
 	}()
 	if errBegin != nil {
 		return 0, errBegin
+	}
+	if obj.CountryID > 0 {
+		obj.Country = new(AddressCountry)
+		obj.Country.ID = obj.CountryID
 	}
 	id, err = o.Insert(obj)
 	if err == nil {
@@ -183,10 +187,11 @@ func GetAllAddressProvince(query map[string]interface{}, exclude map[string]inte
 func UpdateAddressProvince(obj *AddressProvince, updateUser *User) (id int64, err error) {
 	o := orm.NewOrm()
 	obj.UpdateUser = updateUser
-	var num int64
-	if num, err = o.Update(obj, "Name", "Country", "UpdateDate", "UpdateUser"); err == nil {
-		fmt.Println("Number of records updated in database:", num)
+	if obj.CountryID > 0 {
+		obj.Country = new(AddressCountry)
+		obj.Country.ID = obj.CountryID
 	}
+	_, err = o.Update(obj, "Name", "Country", "UpdateDate", "UpdateUser")
 	return obj.ID, err
 }
 

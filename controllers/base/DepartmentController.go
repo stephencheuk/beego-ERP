@@ -55,16 +55,15 @@ func (ctl *DepartmentController) Get() {
 // Put 修改产品款式
 func (ctl *DepartmentController) Put() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
 	department := new(md.Department)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), department); err == nil {
+	if err = ctl.ParseForm(department); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(department)).Type().Name()
-		if id, err = md.AddDepartment(department, &ctl.User); err == nil {
+		if id, err = md.UpdateDepartment(department, &ctl.User); err == nil {
 			result["code"] = "success"
 			result["location"] = ctl.URL + strconv.FormatInt(id, 10) + "?action=detail"
 		} else {
@@ -82,13 +81,12 @@ func (ctl *DepartmentController) Put() {
 }
 func (ctl *DepartmentController) PostCreate() {
 	result := make(map[string]interface{})
-	postData := ctl.GetString("postData")
 	department := new(md.Department)
 	var (
 		err error
 		id  int64
 	)
-	if err = json.Unmarshal([]byte(postData), department); err == nil {
+	if err = ctl.ParseForm(department); err == nil {
 		// 获得struct表名
 		// structName := reflect.Indirect(reflect.ValueOf(department)).Type().Name()
 

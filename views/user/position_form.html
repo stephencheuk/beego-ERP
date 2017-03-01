@@ -13,7 +13,7 @@
         <a href="{{.URL}}" class="btn btn-info fa fa-list pull-left">&nbsp列表</a>
     </div>
     {{ .xsrf }} {{if .RecordID}}
-    <input type="hidden" data-type="int" class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
+    <input type="hidden"  class="{{.FormField}}" name="recordID" id="record-id" value="{{.RecordID}}"> {{end}}
 
     <div class="row">
         <div class="col-md-6">
@@ -25,7 +25,7 @@
                             <label for="name" class="col-md-4 control-label label-start">职位名称<span class="required-input">&nbsp*</span></label>
                             <div class="col-md-8">
                                 <p class="p-form-control">{{if .Position}} {{.Position.Name}} {{end}}</p>
-                                <input data-type="string" class="{{.FormField}} form-control" id="name" name="Name" type="text" {{if .Position}} data-oldValue="{{.Position.Name}}" value="{{.Position.Name}}" {{end}} />
+                                <input class="{{.FormField}} form-control" id="name" name="Name" type="text" {{if .Position}} data-oldValue="{{.Position.Name}}" value="{{.Position.Name}}" {{end}} />
                             </div>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                 <legend>职位描述</legend>
                 <div class="col-md-12">
                     <p class="p-form-control">{{if .Position}} {{.Position.Description}} {{end}}</p>
-                    <textarea data-type="string" class="form-control {{.FormField}}" name="Description" rows="5" {{if .Position}} data-oldValue="{{.Position.Description}}" value="{{.Position.Description}}" {{end}} placeholder="请输入职位描述信息">{{if .Position}}  {{.Position.Description}} {{end}}</textarea>
+                    <textarea class="form-control {{.FormField}}" name="Description" rows="5" {{if .Position}} data-oldValue="{{.Position.Description}}" value="{{.Position.Description}}" {{end}} placeholder="请输入职位描述信息">{{if .Position}}  {{.Position.Description}} {{end}}</textarea>
                 </div>
             </fieldset>
         </div>
